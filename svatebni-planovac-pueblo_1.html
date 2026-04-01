@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Svatební Plánovač 💍 Mlýn vodníka Slámy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --parchment:#fdf8f0;
+  --ivory:#f9f2e6;
+  --cream:#f4ead6;
+  --gold:#c5a55a;
+  --gold-light:#e8d5a0;
+  --gold-dark:#9e7e38;
+  --rose:#d4a0a0;
+  --rose-dark:#a06060;
+  --sage:#8a9e82;
+  --brown:#5c4a32;
+  --brown-light:#8a7258;
+  --white:#fffef9;
+  --shadow:rgba(92,74,50,0.1);
+}
+body{font-family:'Lato',sans-serif;background:var(--parchment);color:var(--brown);min-height:100vh;font-weight:300;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5a55a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+
+/* HEADER */
+.header{background:var(--white);border-bottom:2px solid var(--gold-light);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px var(--shadow);}
+.header-inner{max-width:1000px;margin:0 auto;}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px;flex-wrap:wrap;gap:10px;}
+.logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--brown);letter-spacing:0.02em;display:flex;align-items:center;gap:10px;}
+.logo-sub{font-size:11px;font-weight:400;color:var(--brown-light);font-style:italic;margin-top:2px;font-family:'Lato',sans-serif;}
+.logo-wrap{display:flex;flex-direction:column;}
+.countdown-badge{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;font-size:12px;font-weight:700;letter-spacing:0.06em;padding:6px 16px;border-radius:24px;text-align:center;box-shadow:0 2px 8px rgba(197,165,90,0.4);}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--cream);}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{background:none;border:none;border-bottom:3px solid transparent;padding:10px 16px;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--brown-light);cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.nav-btn:hover{color:var(--gold-dark);}
+.nav-btn.active{color:var(--gold-dark);border-bottom-color:var(--gold);}
+
+/* MAIN */
+.main{padding:24px;max-width:1000px;margin:0 auto;}
+
+/* ORNAMENT DIVIDER */
+.ornament-div{display:flex;align-items:center;gap:16px;margin:8px 0 20px;color:var(--gold);font-size:16px;opacity:0.7;}
+.ornament-div::before,.ornament-div::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--gold-light);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 16px var(--shadow);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-light),var(--gold),var(--gold-light));}
+.card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--brown);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.card-title .icon{font-size:18px;}
+
+/* PRICE NOTE */
+.price-note{background:linear-gradient(135deg,#fff8e8,#fdf2d4);border:1px solid var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--brown-light);margin-bottom:16px;line-height:1.6;}
+.price-note strong{color:var(--gold-dark);}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:640px){.grid-2{grid-template-columns:1fr;}.grid-3{grid-template-columns:1fr 1fr;}.grid-4{grid-template-columns:1fr 1fr;}}
+
+/* GUEST PILLS */
+.guest-pill{background:var(--ivory);border:1px solid var(--gold-light);border-radius:12px;padding:16px 12px;text-align:center;transition:transform 0.2s;}
+.guest-pill:hover{transform:translateY(-2px);}
+.guest-pill .gp-emoji{font-size:26px;margin-bottom:6px;}
+.guest-pill .gp-count{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--gold-dark);line-height:1;}
+.guest-pill .gp-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--brown-light);margin-top:4px;}
+.guest-pill .gp-price{font-size:11px;color:var(--gold-dark);margin-top:4px;font-weight:700;}
+
+/* INPUTS */
+.input-group{margin-bottom:14px;}
+.input-group label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light);margin-bottom:6px;font-weight:700;}
+input[type="text"],input[type="number"],input[type="date"],select,textarea{width:100%;background:var(--ivory);border:1px solid var(--gold-light);border-radius:8px;padding:10px 14px;font-family:'Lato',sans-serif;font-size:14px;font-weight:300;color:var(--brown);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(197,165,90,0.15);}
+
+/* BUTTONS */
+.btn{border:none;border-radius:8px;padding:10px 20px;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;box-shadow:0 4px 12px rgba(197,165,90,0.35);}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(197,165,90,0.5);}
+.btn-outline{background:transparent;border:1px solid var(--gold-light);color:var(--brown-light);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-dark);}
+.btn-del{background:transparent;border:1px solid #e0b0b0;color:#a06060;padding:6px 12px;font-size:11px;}
+.btn-del:hover{background:#fff0f0;}
+
+/* PROGRESS */
+.progress-wrap{margin-top:10px;}
+.progress-bar{height:10px;background:var(--cream);border-radius:5px;overflow:hidden;margin:6px 0;}
+.progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold-light),var(--gold));transition:width 0.6s ease;}
+.progress-fill.ovr{background:linear-gradient(90deg,#e0a0a0,var(--rose-dark));}
+.progress-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--brown-light);}
+
+/* EXPENSE ITEM */
+.expense-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream);}
+.expense-item:last-child{border-bottom:none;}
+.expense-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.expense-name{flex:1;font-size:14px;}
+.expense-vendor{font-size:11px;color:var(--brown-light);}
+.expense-amount{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--gold-dark);white-space:nowrap;}
+.expense-planned{font-size:11px;color:var(--brown-light);text-align:right;}
+
+/* TAGS */
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--cream);color:var(--brown-light);letter-spacing:0.04em;}
+
+/* TOTAL ROW */
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;border-top:2px solid var(--gold-light);margin-top:12px;}
+.total-label{font-family:'Playfair Display',serif;font-size:18px;color:var(--brown);}
+.total-amount{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--gold-dark);}
+
+/* FORM ROW */
+.form-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+.form-row .input-group{flex:1;min-width:110px;margin-bottom:0;}
+
+/* CHECK ITEM */
+.check-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--cream);cursor:pointer;}
+.check-item:last-child{border-bottom:none;}
+.check-box{width:22px;height:22px;border:2px solid var(--gold-light);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:all 0.2s;}
+.check-item.done .check-box{background:var(--sage);border-color:var(--sage);color:white;}
+.check-item.done .check-text{text-decoration:line-through;color:var(--brown-light);}
+.check-text{font-size:14px;flex:1;}
+.check-deadline{font-size:11px;color:var(--brown-light);}
+.check-deadline.overdue{color:#c06060;}
+
+/* VENDOR CARD */
+.vendor-card{background:var(--ivory);border:1px solid var(--gold-light);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.vstatus{display:inline-block;font-size:11px;padding:3px 10px;border-radius:12px;font-weight:700;margin-top:6px;letter-spacing:0.04em;}
+.status-confirmed{background:#e8f5e9;color:#4a8a4a;}
+.status-negotiating{background:#fff8e1;color:#9a7a20;}
+.status-contacted{background:#e8f0ff;color:#4a60a0;}
+.status-looking{background:#f5f0e8;color:#8a6a40;}
+
+/* SECTION HEADER */
+.section-hdr{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin:14px 0 6px;font-style:italic;}
+
+/* STAT CARDS */
+.stat-card{background:var(--ivory);border:1px solid var(--gold-light);border-radius:10px;padding:16px;text-align:center;}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--brown-light);margin-bottom:6px;}
+.stat-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold-dark);}
+.stat-sub{font-size:11px;color:var(--brown-light);margin-top:3px;}
+
+/* CATERING TABLE */
+.ctable{width:100%;border-collapse:collapse;margin-top:12px;}
+.ctable th{background:var(--cream);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light);font-weight:700;padding:10px 14px;text-align:left;}
+.ctable td{padding:10px 14px;border-bottom:1px solid var(--cream);font-size:14px;}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable .amount{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--gold-dark);}
+.ctable .total-tr td{background:linear-gradient(135deg,#fdf8f0,#f9f0dc);font-weight:700;border-top:2px solid var(--gold-light);}
+
+/* HIDDEN */
+.hidden{display:none;}
+.empty-msg{color:var(--brown-light);font-size:13px;text-align:center;padding:24px;font-style:italic;}
+
+/* OVERVIEW HERO */
+.hero{background:linear-gradient(135deg,#2a1f0e,#5c4a32);border-radius:12px;padding:28px;color:white;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;}
+.hero::before{content:'❧';position:absolute;top:-10px;left:20px;font-size:80px;opacity:0.06;color:var(--gold);}
+.hero::after{content:'❧';position:absolute;bottom:-10px;right:20px;font-size:80px;opacity:0.06;color:var(--gold);transform:scaleX(-1);}
+.hero-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--gold-light);letter-spacing:0.04em;}
+.hero-subtitle{font-size:13px;color:rgba(255,255,255,0.7);margin-top:6px;letter-spacing:0.06em;}
+.hero-date{font-family:'Playfair Display',serif;font-size:18px;color:white;margin-top:12px;font-style:italic;}
+.hero-venue{font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:0.08em;}
+.hero-countdown{background:rgba(197,165,90,0.2);border:1px solid rgba(197,165,90,0.4);border-radius:8px;padding:10px 20px;margin-top:14px;display:inline-block;}
+.hero-countdown .days{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--gold-light);line-height:1;}
+.hero-countdown .days-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.6);}
+
+.overbudget{color:#c06060!important;}
+.onbudget{color:var(--sage)!important;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo">
+        <span>💍</span>
+        <div class="logo-wrap">
+          <span>Svatební Plánovač</span>
+          <span class="logo-sub">Mlýn vodníka Slámy · Háj ve Slezsku</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="countdown-badge" id="countdown-pill">Načítám…</div>
+        <div id="sync-status" style="font-size:11px;color:var(--brown-light);font-weight:700;letter-spacing:0.04em;">⏳ Inicializuji…</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" onclick="showTab('overview')">🏡 Přehled</button>
+      <button class="nav-btn" onclick="showTab('guests')">👥 Hosté & Catering</button>
+      <button class="nav-btn" onclick="showTab('budget')">💰 Ostatní výdaje</button>
+      <button class="nav-btn" onclick="showTab('checklist')">✅ Checklist</button>
+      <button class="nav-btn" onclick="showTab('vendors')">🤝 Dodavatelé</button>
+      <button class="nav-btn" onclick="showTab('settings')">⚙️ Nastavení</button>
+      <button class="nav-btn" onclick="showTab('guide')" style="color:var(--gold-dark);font-weight:700;">🔥 Firebase návod</button>
+    </nav>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ======================== OVERVIEW ======================== -->
+  <div id="tab-overview">
+
+    <div class="hero">
+      <div class="hero-title" id="hero-names">Váš svatební den</div>
+      <div class="hero-subtitle">✦ &nbsp; Mlýn vodníka Slámy &nbsp; ✦</div>
+      <div class="hero-date">22. května 2027</div>
+      <div class="hero-venue">Sál Pueblo · Háj ve Slezsku–Lhota</div>
+      <div class="hero-countdown">
+        <div class="days" id="hero-days">—</div>
+        <div class="days-label">dní do svatby</div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="guest-pill"><div class="gp-emoji">👫</div><div class="gp-count" id="ov-adults">0</div><div class="gp-label">Dospělí</div></div>
+      <div class="guest-pill"><div class="gp-emoji">🧒</div><div class="gp-count" id="ov-teens">0</div><div class="gp-label">Děti 11–17</div></div>
+      <div class="guest-pill"><div class="gp-emoji">👧</div><div class="gp-count" id="ov-children">0</div><div class="gp-label">Děti 3–10</div></div>
+      <div class="guest-pill"><div class="gp-emoji">👶</div><div class="gp-count" id="ov-babies">0</div><div class="gp-label">Do 3 let (free)</div></div>
+    </div>
+
+    <div style="margin-top:20px;" class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="icon">💰</span> Celkový rozpočet</div>
+        <div class="stat-label">Plánovaný rozpočet</div>
+        <div class="stat-value" id="ov-budget">0 Kč</div>
+        <div class="progress-wrap">
+          <div class="progress-labels"><span id="ov-spent-lbl">0 Kč utraceno</span><span id="ov-pct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="ov-bar" style="width:0%"></div></div>
+          <div class="progress-labels"><span></span><span id="ov-remaining" class="onbudget">0 Kč zbývá</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🍽️</span> Catering & Nápoje</div>
+        <div id="ov-catering-summary" class="empty-msg">Zadejte hosty v záložce Hosté</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span> Přehled výdajů</div>
+      <div id="ov-expenses"><div class="empty-msg">Žádné výdaje</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="icon">✅</span> Úkoly</div>
+        <div id="ov-tasks"><div class="empty-msg">Žádné úkoly</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🤝</span> Dodavatelé</div>
+        <div id="ov-vendors"><div class="empty-msg">Žádní dodavatelé</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================== GUESTS ======================== -->
+  <div id="tab-guests" class="hidden">
+
+    <div class="price-note">
+      ⚠️ <strong>Upozornění:</strong> Ceny v katalogu jsou platné pro rok 2026. Mlýn vodníka Slámy aktualizuje ceny pro rok 2027 koncem roku 2026. Doporučujeme po obdržení nového ceníku aktualizovat částky níže.
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">👥</span> Počty hostů</div>
+      <div class="grid-4">
+        <div class="input-group"><label>👫 Dospělí (18+)</label><input type="number" id="g-adults" min="0" value="0" oninput="calcCatering()"></div>
+        <div class="input-group"><label>🧒 Děti 11–17 let</label><input type="number" id="g-teens" min="0" value="0" oninput="calcCatering()"></div>
+        <div class="input-group"><label>👧 Děti 3–10 let (½ porce)</label><input type="number" id="g-children" min="0" value="0" oninput="calcCatering()"></div>
+        <div class="input-group"><label>👶 Děti do 3 let (zdarma)</label><input type="number" id="g-babies" min="0" value="0" oninput="calcCatering()"></div>
+      </div>
+      <div class="grid-4" style="margin-top:8px;">
+        <div class="guest-pill"><div class="gp-emoji">👫</div><div class="gp-count" id="gp-adults">0</div><div class="gp-label">Dospělí</div></div>
+        <div class="guest-pill"><div class="gp-emoji">🧒</div><div class="gp-count" id="gp-teens">0</div><div class="gp-label">Děti 11–17</div></div>
+        <div class="guest-pill"><div class="gp-emoji">👧</div><div class="gp-count" id="gp-children">0</div><div class="gp-label">Děti 3–10</div></div>
+        <div class="guest-pill"><div class="gp-emoji">🪑</div><div class="gp-count" id="gp-total">0</div><div class="gp-label">Celkem hostů</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🍽️</span> Jídelní balíček STANDARD — celodenní hosté</div>
+      <div class="grid-3">
+        <div class="input-group"><label>💰 Cena dospělý / 18+ (Kč)</label><input type="number" id="p-food-adult" value="1890" oninput="calcCatering()"></div>
+        <div class="input-group"><label>💰 Cena dítě 11–17 – plná porce (Kč)</label><input type="number" id="p-food-teen" value="1890" oninput="calcCatering()"></div>
+        <div class="input-group"><label>💰 Cena dítě 3–10 – ½ porce (Kč)</label><input type="number" id="p-food-child" value="1320" oninput="calcCatering()"></div>
+      </div>
+      <div class="section-hdr">Nápojový balíček STANDARD</div>
+      <div class="grid-3">
+        <div class="input-group"><label>🍺 Nápoje zletilí 18+ (Kč)</label><input type="number" id="p-drink-adult" value="640" oninput="calcCatering()"></div>
+        <div class="input-group"><label>🥤 Nápoje nezletilí 3–17 (Kč)</label><input type="number" id="p-drink-child" value="380" oninput="calcCatering()"></div>
+        <div class="input-group"><label>🆓 Nápoje do 3 let (Kč)</label><input type="number" id="p-drink-baby" value="0" disabled style="opacity:0.5;cursor:not-allowed;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧾</span> Kalkulace cateringu</div>
+      <table class="ctable">
+        <thead><tr><th>Kategorie</th><th>Počet</th><th>Jídlo / os.</th><th>Nápoje / os.</th><th>Celkem / os.</th><th>Součet</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>👫 Dospělí (18+)</td>
+            <td id="ct-a-n">0</td>
+            <td id="ct-a-f">—</td>
+            <td id="ct-a-d">—</td>
+            <td id="ct-a-pp">—</td>
+            <td class="amount" id="ct-a-t">0 Kč</td>
+          </tr>
+          <tr>
+            <td>🧒 Děti 11–17</td>
+            <td id="ct-t-n">0</td>
+            <td id="ct-t-f">—</td>
+            <td id="ct-t-d">—</td>
+            <td id="ct-t-pp">—</td>
+            <td class="amount" id="ct-t-t">0 Kč</td>
+          </tr>
+          <tr>
+            <td>👧 Děti 3–10 (½ porce)</td>
+            <td id="ct-c-n">0</td>
+            <td id="ct-c-f">—</td>
+            <td id="ct-c-d">—</td>
+            <td id="ct-c-pp">—</td>
+            <td class="amount" id="ct-c-t">0 Kč</td>
+          </tr>
+          <tr>
+            <td>👶 Děti do 3 let</td>
+            <td id="ct-b-n">0</td>
+            <td colspan="3" style="color:var(--brown-light);font-style:italic;">Zdarma</td>
+            <td class="amount">0 Kč</td>
+          </tr>
+          <tr class="total-tr">
+            <td colspan="5"><strong>CELKEM CATERING</strong></td>
+            <td class="amount" id="ct-grand" style="font-size:22px;">0 Kč</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;font-size:12px;color:var(--brown-light);font-style:italic;">
+        * Povinný odběr destilátů: 1,5 dcl × počet zletilých osob (formou odkupu celých lahví dle výběru)
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== BUDGET ======================== -->
+  <div id="tab-budget" class="hidden">
+    <div class="card">
+      <div class="card-title"><span class="icon">🎯</span> Celkový plánovaný rozpočet</div>
+      <div class="form-row">
+        <div class="input-group" style="flex:2;"><label>Váš celkový rozpočet (Kč)</label><input type="number" id="b-budget" min="0" value="0" oninput="saveBudget()"></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-labels"><span>Zaplaceno: <strong id="b-paid-lbl">0 Kč</strong></span><span id="b-rem-lbl" class="onbudget">Zbývá: 0 Kč</span></div>
+        <div class="progress-bar" style="height:14px;"><div class="progress-fill" id="b-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">➕</span> Přidat výdaj</div>
+      <div class="price-note">
+        <strong>Fixní náklady z katalogu:</strong> Pronájem prostor 20 000 Kč · Obřad v areálu 8 500 Kč · Zvučení obřadu 1 500 Kč. Tyto položky jsou předvyplněny níže.
+      </div>
+      <div class="form-row">
+        <div class="input-group" style="flex:2;"><label>Název výdaje</label><input type="text" id="b-name" placeholder="např. Fotograf"></div>
+        <div class="input-group"><label>Kategorie</label>
+          <select id="b-cat">
+            <option>Venue & Pronájem</option><option>Catering</option><option>Nápoje</option>
+            <option>Fotograf</option><option>Kameraman</option><option>Hudba / DJ</option>
+            <option>Květiny & Dekorace</option><option>Šaty & Oblek</option><option>Dort & Sladký bar</option>
+            <option>Dopravu</option><option>Líčení & Vlasy</option><option>Prsteny</option>
+            <option>Ubytování</option><option>Líbánky</option><option>Jiné</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="input-group"><label>Plánováno (Kč)</label><input type="number" id="b-planned" placeholder="0" min="0"></div>
+        <div class="input-group"><label>Zaplaceno (Kč)</label><input type="number" id="b-paid" placeholder="0" min="0"></div>
+        <div class="input-group" style="flex:1.5;"><label>Dodavatel / poznámka</label><input type="text" id="b-vendor" placeholder="Firma, jméno..."></div>
+        <div style="padding-bottom:1px;"><button class="btn btn-gold" onclick="addExpense()">+ Přidat</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> Výdaje</div>
+      <div id="expense-list"><div class="empty-msg">Zatím žádné výdaje.</div></div>
+      <div class="total-row" id="expense-totals" style="display:none;">
+        <span class="total-label">Plánováno / Zaplaceno</span>
+        <span>
+          <span style="font-family:'Playfair Display',serif;font-size:22px;color:var(--brown-light);" id="b-total-planned">0 Kč</span>
+          <span style="color:var(--gold-light);margin:0 8px;">/</span>
+          <span class="total-amount" id="b-total-paid">0 Kč</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== CHECKLIST ======================== -->
+  <div id="tab-checklist" class="hidden">
+    <div class="card">
+      <div class="card-title"><span class="icon">✅</span> Přidat úkol</div>
+      <div class="form-row">
+        <div class="input-group" style="flex:2;"><label>Úkol</label><input type="text" id="cl-text" placeholder="např. Objednat fotograf"></div>
+        <div class="input-group"><label>Kategorie</label>
+          <select id="cl-cat">
+            <option>Venue</option><option>Catering & Nápoje</option><option>Fotograf</option>
+            <option>Oblečení</option><option>Dekorace & Květiny</option><option>Hudba</option>
+            <option>Dokumenty & Matrika</option><option>Hosté & Pozvánky</option>
+            <option>Ubytování</option><option>Líbánky</option><option>Jiné</option>
+          </select>
+        </div>
+        <div class="input-group"><label>Termín</label><input type="date" id="cl-date"></div>
+        <div style="padding-bottom:1px;"><button class="btn btn-gold" onclick="addTask()">+ Přidat</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📝</span> Moje úkoly</div>
+      <div id="checklist-list"><div class="empty-msg">Zatím žádné úkoly. Přidejte první úkol výše.</div></div>
+    </div>
+  </div>
+
+  <!-- ======================== VENDORS ======================== -->
+  <div id="tab-vendors" class="hidden">
+    <div class="card">
+      <div class="card-title"><span class="icon">🤝</span> Přidat dodavatele</div>
+      <div class="form-row">
+        <div class="input-group" style="flex:1.5;"><label>Jméno / Firma</label><input type="text" id="v-name" placeholder="Studio Novák"></div>
+        <div class="input-group"><label>Kategorie</label>
+          <select id="v-cat">
+            <option>Fotograf</option><option>Kameraman</option><option>DJ / Hudba</option>
+            <option>Kapela</option><option>Cukrář / Dort</option><option>Květinář</option>
+            <option>Líčení & Vlasy</option><option>Doprava</option><option>Fotokoutek</option><option>Jiné</option>
+          </select>
+        </div>
+        <div class="input-group"><label>Stav</label>
+          <select id="v-status">
+            <option value="looking">Hledáme</option><option value="contacted">Kontaktováno</option>
+            <option value="negotiating">Jednáme</option><option value="confirmed">Potvrzeno ✓</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="input-group"><label>Telefon</label><input type="text" id="v-phone" placeholder="+420..."></div>
+        <div class="input-group" style="flex:1.5;"><label>Email</label><input type="text" id="v-email" placeholder="email@..."></div>
+        <div class="input-group"><label>Cena (Kč)</label><input type="number" id="v-price" placeholder="0" min="0"></div>
+        <div class="input-group" style="flex:2;"><label>Poznámka</label><input type="text" id="v-note" placeholder="Volitelná poznámka"></div>
+        <div style="padding-bottom:1px;"><button class="btn btn-gold" onclick="addVendor()">+ Přidat</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📇</span> Moji dodavatelé</div>
+      <div id="vendor-list"><div class="empty-msg">Zatím žádní dodavatelé. Mlýn vodníka Slámy doporučuje ověřené dodavatele — kontakty obdržíte po závazné rezervaci termínu.</div></div>
+    </div>
+  </div>
+
+  <!-- ======================== SETTINGS ======================== -->
+  <div id="tab-settings" class="hidden">
+    <div class="card">
+      <div class="card-title"><span class="icon">💍</span> Novomanželé</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Jméno nevěsty</label><input type="text" id="s-bride" placeholder="Anička" oninput="saveSettings()"></div>
+        <div class="input-group"><label>Jméno ženicha</label><input type="text" id="s-groom" placeholder="Honzík" oninput="saveSettings()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🏛️</span> Mlýn vodníka Slámy — info</div>
+      <div style="background:var(--ivory);border-radius:8px;padding:14px;font-size:13px;line-height:2;color:var(--brown);">
+        📍 K Mlýnu 1, 747 92 Háj ve Slezsku–Lhota<br>
+        📅 Datum: <strong>22. května 2027</strong><br>
+        🏛️ Sál Pueblo (kapacita až 110 osob u tabule)<br>
+        ⏰ Pronájem 07:00 – 02:00 (možnost do 04:00 za příplatek 2 500 Kč/hod.)<br>
+        📞 Koordinátorka: Marie Glierová — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="96fbf7e4fff3d6e3e5faf7fbefb8f5ec">[email&#160;protected]</a> — +420 606 718 647<br>
+        🌐 www.uslamy.cz
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">💾</span> Data & Export</div>
+      <p style="font-size:13px;color:var(--brown-light);margin-bottom:16px;">Data jsou uložena v localStorage vašeho prohlížeče.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="exportData()">📥 Exportovat JSON</button>
+        <button class="btn btn-outline" onclick="importData()">📤 Importovat JSON</button>
+        <button class="btn btn-del" onclick="clearData()">🗑️ Smazat vše</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+    </div>
+  </div>
+
+  <!-- ======================== SETUP BANNER ======================== -->
+  <div id="setup-banner" style="display:none;background:linear-gradient(135deg,#fff8e8,#fdf2d4);border:2px solid var(--gold);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--brown);margin-bottom:8px;">⚙️ Firebase není nakonfigurován</div>
+    <div style="font-size:13px;color:var(--brown-light);line-height:1.7;">Appka teď funguje lokálně (data uložena jen v tomto prohlížeči). Pro sdílení s přítelkyní klikni na záložku <strong>🔥 Firebase návod</strong> výše.</div>
+  </div>
+
+  <!-- ======================== GUIDE ======================== -->
+  <div id="tab-guide" class="hidden">
+    <div class="card">
+      <div class="card-title">🔥 Jak nastavit Firebase sync — krok za krokem</div>
+      <div style="font-size:13px;line-height:1.9;color:var(--brown);">
+        <p style="margin-bottom:16px;color:var(--brown-light);font-style:italic;">Celé nastavení zabere cca 15–20 minut. Vše je zdarma, nepotřebuješ kreditní kartu.</p>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 1 — Vytvoř Firebase projekt</div>
+          1. Jdi na <strong>console.firebase.google.com</strong> (přihlas se Google účtem)<br>
+          2. Klikni <strong>„Add project"</strong><br>
+          3. Název projektu: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-2027</code> (nebo cokoliv)<br>
+          4. Google Analytics: <strong>vypni</strong> (není potřeba) → <strong>Create project</strong>
+        </div>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 2 — Vytvoř Realtime Database</div>
+          1. V levém menu klikni <strong>„Build" → „Realtime Database"</strong><br>
+          2. Klikni <strong>„Create database"</strong><br>
+          3. Lokace: vyber <strong>Europe-west1 (Belgium)</strong><br>
+          4. Security rules: vyber <strong>„Start in test mode"</strong> → Enable<br>
+          <div style="background:#fff3cd;border-radius:6px;padding:8px;margin-top:8px;font-size:12px;">⚠️ Test mode expiruje za 30 dní — pak musíš v záložce Rules změnit datum nebo přidat auth. Připomenu ti níže.</div>
+        </div>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 3 — Získej konfiguraci</div>
+          1. V Project Overview klikni na ikonu <strong>&lt;/&gt; (Web)</strong><br>
+          2. App nickname: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-web</code> → Register app<br>
+          3. Uvidíš blok kódu s <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">firebaseConfig = { ... }</code><br>
+          4. <strong>Zkopíruj celý obsah složených závorek</strong> — budeš ho potřebovat v dalším kroku
+        </div>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 4 — Vytvoř GitHub repozitář</div>
+          1. Jdi na <strong>github.com</strong> → New repository<br>
+          2. Název: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-planovac</code> → <strong>Public</strong> → Create<br>
+          3. Klikni <strong>„uploading an existing file"</strong><br>
+          4. Nahraj soubor <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svatebni-planovac-pueblo.html</code><br>
+          5. Commit changes
+        </div>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 5 — Vlož Firebase config do souboru</div>
+          1. Na GitHubu klikni na soubor → ikona tužky ✏️ (Edit)<br>
+          2. Najdi sekci <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">FIREBASE_CONFIG = {</code><br>
+          3. Nahraď obsah svou zkopírovanou konfigurací z Kroku 3<br>
+          4. <strong>Commit changes</strong>
+        </div>
+
+        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 6 — Nasaď na Vercel</div>
+          1. Jdi na <strong>vercel.com</strong> → Sign up with GitHub<br>
+          2. <strong>„Add New Project"</strong> → Import svůj repozitář<br>
+          3. Vše nech výchozí → <strong>Deploy</strong><br>
+          4. Dostaneš URL jako <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-planovac.vercel.app</code><br>
+          5. <strong>Tuto URL pošli přítelkyni</strong> — oba uvidíte stejná data!
+        </div>
+
+        <div style="background:linear-gradient(135deg,#e8f5e9,#f0fff0);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--sage);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;color:var(--sage);">✅ Jak upravovat kód v budoucnu</div>
+          1. Jdi na GitHub → klikni na soubor → ✏️ Edit<br>
+          2. Uprav co potřebuješ → Commit changes<br>
+          3. Vercel automaticky nasadí novou verzi za ~30 sekund<br>
+          <div style="margin-top:8px;font-size:12px;color:var(--brown-light);">💡 Nebo mi sem pošli co chceš změnit a já upravím kód — ty jen zkopíruješ na GitHub.</div>
+        </div>
+
+        <div style="background:#fff3cd;border-radius:10px;padding:16px;border-left:4px solid #c5a55a;">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">⏰ Nezapomeň po 30 dnech — Firebase Rules</div>
+          V Firebase console → Realtime Database → <strong>Rules</strong> → změň datum:<br>
+          <code style="background:var(--cream);padding:4px 8px;border-radius:4px;display:block;margin-top:8px;font-size:12px;">"rules": {".read": "now < 1800000000000", ".write": "now < 1800000000000"}</code>
+          <div style="font-size:12px;color:var(--brown-light);margin-top:6px;">Číslo 1800000000000 = rok 2027 (stačí nechat tak)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, set, off } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ═══════════════════════════════════════════════════
+//  🔥 FIREBASE KONFIGURACE — vyplň po nastavení
+// ═══════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "TVUJ_API_KEY",
+  authDomain:        "TVUJ_PROJECT.firebaseapp.com",
+  databaseURL:       "https://TVUJ_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "TVUJ_PROJECT",
+  storageBucket:     "TVUJ_PROJECT.appspot.com",
+  messagingSenderId: "TVOJE_CISLO",
+  appId:             "TVOJE_APP_ID"
+};
+// ═══════════════════════════════════════════════════
+
+const CONFIGURED = !FIREBASE_CONFIG.apiKey.includes('TVUJ');
+
+const CAT_COLORS={'Venue & Pronájem':'#c5a55a','Catering':'#e8a87c','Nápoje':'#9b8ec4','Fotograf':'#6aacb8','Kameraman':'#7aacb8','Hudba / DJ':'#e87c9b','Květiny & Dekorace':'#8ec48a','Šaty & Oblek':'#c4a88e','Dort & Sladký bar':'#c48e8e','Dopravu':'#8eacc4','Líčení & Vlasy':'#c48ec4','Prsteny':'#c4b88e','Ubytování':'#aab8c4','Líbánky':'#d4a0c4','Jiné':'#b0b0b0'};
+const VSTATUS={looking:'Hledáme',contacted:'Kontaktováno',negotiating:'Jednáme',confirmed:'Potvrzeno ✓'};
+
+const DEFAULT_STATE = {
+  settings:{bride:'',groom:''},
+  guests:{adults:0,teens:0,children:0,babies:0,pFoodAdult:1890,pFoodTeen:1890,pFoodChild:1320,pDrinkAdult:640,pDrinkChild:380},
+  budget:0,
+  expenses:[
+    {id:1,name:'Pronájem svatebních prostor',category:'Venue & Pronájem',planned:20000,paid:0,vendor:'Mlýn vodníka Slámy'},
+    {id:2,name:'Obřad v areálu',category:'Venue & Pronájem',planned:8500,paid:0,vendor:'Mlýn vodníka Slámy'},
+    {id:3,name:'Zvučení obřadu',category:'Venue & Pronájem',planned:1500,paid:0,vendor:'Mlýn vodníka Slámy'}
+  ],
+  tasks:[
+    {id:101,text:'Kontaktovat koordinátorku Marie Glierovou (marie@uslamy.cz)',category:'Venue',deadline:'',done:false},
+    {id:102,text:'Složit kauci 20 000 Kč pro závaznou rezervaci termínu',category:'Venue',deadline:'',done:false},
+    {id:103,text:'Zaslat zadávací formulář 14 dní před svatbou',category:'Venue',deadline:'2027-05-08',done:false},
+    {id:104,text:'Rezervovat ubytování pro hosty (doporučeno co nejdříve)',category:'Ubytování',deadline:'',done:false},
+    {id:105,text:'Domluvit fotografa / kameramana',category:'Fotograf',deadline:'',done:false},
+    {id:106,text:'Vybrat a objednat DJ / kapelu',category:'Hudba',deadline:'',done:false},
+    {id:107,text:'Kontaktovat matriku pro úřední sňatek: Šárka Smolková +420 703 141 659',category:'Dokumenty & Matrika',deadline:'',done:false},
+    {id:108,text:'Objednat svatební dort a sweetbar (lze dovézt den předem)',category:'Jiné',deadline:'',done:false},
+    {id:109,text:'Rozeslat pozvánky hostům',category:'Hosté & Pozvánky',deadline:'',done:false},
+    {id:110,text:'Potvrdit přesný počet hostů (14 dní před → kalkulace se nemění)',category:'Catering & Nápoje',deadline:'2027-05-08',done:false}
+  ],
+  vendors:[
+    {id:201,name:'Mlýn vodníka Slámy',category:'Venue',status:'confirmed',phone:'+420 606 718 647',email:'marie@uslamy.cz',price:28500,note:'Pronájem + obřad + zvučení'},
+    {id:202,name:'NESTÁDO (koně & poníci)',category:'Jiné',status:'looking',phone:'+420 606 786 676',email:'info@nestado.cz',price:0,note:'Aktivity s koňmi, kontakt: Monika Nestrojová'}
+  ]
+};
+
+let S = JSON.parse(JSON.stringify(DEFAULT_STATE));
+let db = null;
+let dbRef = null;
+let saveTimer = null;
+let isRemoteUpdate = false;
+
+// ── FIREBASE INIT ──────────────────────────────────
+function initFirebase() {
+  if (!CONFIGURED) {
+    showSetupBanner();
+    loadFromLocalStorage();
+    return;
+  }
+  try {
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getDatabase(app);
+    dbRef = ref(db, 'wedding');
+    setSyncStatus('connecting');
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        isRemoteUpdate = true;
+        S = deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), data);
+        applyUI();
+        renderAll();
+        isRemoteUpdate = false;
+      } else {
+        // First time — push defaults
+        saveToFirebase();
+      }
+      setSyncStatus('online');
+    }, (err) => {
+      console.error('Firebase error:', err);
+      setSyncStatus('offline');
+      loadFromLocalStorage();
+    });
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    setSyncStatus('offline');
+    loadFromLocalStorage();
+  }
+}
+
+function deepMerge(target, source) {
+  if (typeof source !== 'object' || source === null) return source;
+  const result = Array.isArray(source) ? [] : Object.assign({}, target);
+  for (const key of Object.keys(source)) {
+    result[key] = (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]))
+      ? deepMerge(target[key] || {}, source[key])
+      : source[key];
+  }
+  return result;
+}
+
+// ── SAVE ──────────────────────────────────────────
+function save() {
+  if (CONFIGURED && db) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveToFirebase, 600);
+  } else {
+    try { localStorage.setItem('pueblo-wedding-v1', JSON.stringify(S)); } catch(e) {}
+  }
+}
+
+function saveToFirebase() {
+  if (!db || !dbRef) return;
+  set(dbRef, JSON.parse(JSON.stringify(S))).catch(e => {
+    console.error('Save error:', e);
+    setSyncStatus('offline');
+  });
+}
+
+function loadFromLocalStorage() {
+  try {
+    const d = localStorage.getItem('pueblo-wedding-v1');
+    if (d) S = deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), JSON.parse(d));
+  } catch(e) {}
+  applyUI();
+  renderAll();
+}
+
+// ── SYNC STATUS INDICATOR ─────────────────────────
+function setSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const map = {
+    connecting: {text:'🔄 Připojuji…', color:'#c5a55a'},
+    online:     {text:'🟢 Synced', color:'#4a8a4a'},
+    offline:    {text:'🔴 Offline', color:'#c06060'}
+  };
+  const s = map[status] || map.offline;
+  el.textContent = s.text;
+  el.style.color = s.color;
+}
+
+// ── SETUP BANNER ──────────────────────────────────
+function showSetupBanner() {
+  const banner = document.getElementById('setup-banner');
+  if (banner) banner.style.display = 'block';
+}
+
+// ── UI ────────────────────────────────────────────
+function applyUI(){
+  const f=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};
+  f('s-bride',S.settings.bride);f('s-groom',S.settings.groom);
+  f('g-adults',S.guests.adults||0);f('g-teens',S.guests.teens||0);
+  f('g-children',S.guests.children||0);f('g-babies',S.guests.babies||0);
+  f('p-food-adult',S.guests.pFoodAdult||1890);f('p-food-teen',S.guests.pFoodTeen||1890);
+  f('p-food-child',S.guests.pFoodChild||1320);
+  f('p-drink-adult',S.guests.pDrinkAdult||640);f('p-drink-child',S.guests.pDrinkChild||380);
+  f('b-budget',S.budget||0);
+}
+
+function fmt(n){return Number(n||0).toLocaleString('cs-CZ')+' Kč';}
+
+// ── COUNTDOWN ─────────────────────────────────────
+function updateCountdown(){
+  const w='2027-05-22'.split('-');
+  const wedding=new Date(+w[0],+w[1]-1,+w[2]);
+  const today=new Date();today.setHours(0,0,0,0);
+  const diff=Math.round((wedding-today)/86400000);
+  const pill=document.getElementById('countdown-pill');
+  const heroD=document.getElementById('hero-days');
+  if(diff>0){if(pill)pill.textContent=`Za ${diff} dní 💍`;if(heroD)heroD.textContent=diff;}
+  else if(diff===0){if(pill)pill.textContent='🎊 Dnes je ten den!';if(heroD)heroD.textContent='0';}
+  else{if(pill)pill.textContent='Gratulujeme! 🎉';if(heroD)heroD.textContent='✓';}
+  const hn=document.getElementById('hero-names');
+  if(hn){const b=S.settings.bride,g=S.settings.groom;if(b||g)hn.textContent=(b||'?')+' & '+(g||'?');}
+}
+
+// ── GUESTS ────────────────────────────────────────
+function calcCatering(){
+  const a=+document.getElementById('g-adults').value||0;
+  const t=+document.getElementById('g-teens').value||0;
+  const c=+document.getElementById('g-children').value||0;
+  const b=+document.getElementById('g-babies').value||0;
+  const pFA=+document.getElementById('p-food-adult').value||0;
+  const pFT=+document.getElementById('p-food-teen').value||0;
+  const pFC=+document.getElementById('p-food-child').value||0;
+  const pDA=+document.getElementById('p-drink-adult').value||0;
+  const pDC=+document.getElementById('p-drink-child').value||0;
+  S.guests={adults:a,teens:t,children:c,babies:b,pFoodAdult:pFA,pFoodTeen:pFT,pFoodChild:pFC,pDrinkAdult:pDA,pDrinkChild:pDC};
+  const total=a+t+c+b;
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('gp-adults',a);s('gp-teens',t);s('gp-children',c);s('gp-total',total);
+  s('ov-adults',a);s('ov-teens',t);s('ov-children',c);s('ov-babies',b);
+  const tA=(pFA+pDA)*a,tT=(pFT+pDC)*t,tC=(pFC+pDC)*c;
+  const grand=tA+tT+tC;
+  s('ct-a-n',a);s('ct-a-f',fmt(pFA));s('ct-a-d',fmt(pDA));s('ct-a-pp',fmt(pFA+pDA));s('ct-a-t',fmt(tA));
+  s('ct-t-n',t);s('ct-t-f',fmt(pFT));s('ct-t-d',fmt(pDC));s('ct-t-pp',fmt(pFT+pDC));s('ct-t-t',fmt(tT));
+  s('ct-c-n',c);s('ct-c-f',fmt(pFC));s('ct-c-d',fmt(pDC));s('ct-c-pp',fmt(pFC+pDC));s('ct-c-t',fmt(tC));
+  s('ct-b-n',b);s('ct-grand',fmt(grand));
+  const oc=document.getElementById('ov-catering-summary');
+  if(oc){
+    if(total===0){oc.innerHTML='<div class="empty-msg">Zadejte hosty v záložce Hosté</div>';}
+    else{oc.innerHTML=`
+      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--cream)"><span>🍽️ Catering celkem</span><strong>${fmt(grand)}</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--cream)"><span>👥 Celkem hostů</span><strong>${total}</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:var(--brown-light)"><span>Průměr / host</span><span>${total>0?fmt(Math.round(grand/total)):'—'}</span></div>
+      <div class="total-row" style="padding-top:12px;margin-top:4px;"><span class="total-label" style="font-size:16px">Catering</span><span style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold-dark)">${fmt(grand)}</span></div>`;}
+  }
+  save();updateOverview();
+}
+window.calcCatering = calcCatering;
+
+// ── BUDGET ────────────────────────────────────────
+function saveBudget(){S.budget=+document.getElementById('b-budget').value||0;save();renderBudgetBar();updateOverview();}
+window.saveBudget = saveBudget;
+
+function renderBudgetBar(){
+  const spent=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
+  const budget=S.budget||0;const rem=budget-spent;
+  const pct=budget>0?Math.min(100,(spent/budget)*100):0;
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('b-paid-lbl',fmt(spent));
+  const re=document.getElementById('b-rem-lbl');if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
+  const bar=document.getElementById('b-bar');if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
+}
+
+function updateOverview(){
+  const spent=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
+  const budget=S.budget||0;const rem=budget-spent;
+  const pct=budget>0?Math.min(100,(spent/budget)*100):0;
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('ov-budget',fmt(budget));s('ov-spent-lbl',fmt(spent)+' zaplaceno');s('ov-pct',Math.round(pct)+'%');
+  const re=document.getElementById('ov-remaining');if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
+  const bar=document.getElementById('ov-bar');if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
+  const cats={};S.expenses.forEach(e=>{if(!cats[e.category])cats[e.category]={planned:0,paid:0};cats[e.category].planned+=e.planned||0;cats[e.category].paid+=e.paid||0;});
+  const oe=document.getElementById('ov-expenses');
+  if(oe){if(!Object.keys(cats).length)oe.innerHTML='<div class="empty-msg">Žádné výdaje</div>';
+  else oe.innerHTML=Object.entries(cats).map(([cat,v])=>`<div class="expense-item"><div class="expense-dot" style="background:${CAT_COLORS[cat]||'#ccc'}"></div><div class="expense-name">${cat}</div><div style="text-align:right"><div class="expense-amount">${fmt(v.paid)}</div><div class="expense-planned">plán: ${fmt(v.planned)}</div></div></div>`).join('');}
+  const ot=document.getElementById('ov-tasks');
+  if(ot){const tot=S.tasks.length,don=S.tasks.filter(t=>t.done).length;
+  if(!tot)ot.innerHTML='<div class="empty-msg">Žádné úkoly</div>';
+  else{const p=Math.round(don/tot*100);ot.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${don}/${tot}</div><div style="font-size:12px;color:var(--brown-light);margin-bottom:8px">splněno (${p}%)</div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:linear-gradient(90deg,var(--sage),#6aac8a)"></div></div>`;}}
+  const ov=document.getElementById('ov-vendors');
+  if(ov){if(!S.vendors.length)ov.innerHTML='<div class="empty-msg">Žádní dodavatelé</div>';
+  else{const conf=S.vendors.filter(v=>v.status==='confirmed').length;ov.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${conf}/${S.vendors.length}</div><div style="font-size:12px;color:var(--brown-light)">potvrzeno</div><div style="margin-top:8px;">${S.vendors.slice(0,3).map(v=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--cream)">${v.name} <span class="vstatus status-${v.status}" style="font-size:10px">${VSTATUS[v.status]}</span></div>`).join('')}</div>`;}}
+}
+
+// ── EXPENSES ──────────────────────────────────────
+function addExpense(){
+  const name=document.getElementById('b-name').value.trim();if(!name)return;
+  S.expenses.push({id:Date.now(),name,category:document.getElementById('b-cat').value,planned:+document.getElementById('b-planned').value||0,paid:+document.getElementById('b-paid').value||0,vendor:document.getElementById('b-vendor').value.trim()});
+  ['b-name','b-planned','b-paid','b-vendor'].forEach(id=>document.getElementById(id).value='');
+  save();renderExpenses();renderBudgetBar();updateOverview();
+}
+window.addExpense = addExpense;
+
+function deleteExpense(id){S.expenses=S.expenses.filter(e=>e.id!==id);save();renderExpenses();renderBudgetBar();updateOverview();}
+window.deleteExpense = deleteExpense;
+
+function renderExpenses(){
+  const el=document.getElementById('expense-list'),te=document.getElementById('expense-totals');if(!el)return;
+  if(!S.expenses.length){el.innerHTML='<div class="empty-msg">Zatím žádné výdaje.</div>';if(te)te.style.display='none';return;}
+  if(te)te.style.display='flex';
+  const tp=S.expenses.reduce((s,e)=>s+(e.planned||0),0),tpd=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
+  const p1=document.getElementById('b-total-planned'),p2=document.getElementById('b-total-paid');
+  if(p1)p1.textContent=fmt(tp);if(p2)p2.textContent=fmt(tpd);
+  el.innerHTML=S.expenses.map(e=>`<div class="expense-item"><div class="expense-dot" style="background:${CAT_COLORS[e.category]||'#ccc'}"></div><div style="flex:1"><div class="expense-name">${e.name}</div>${e.vendor?`<div class="expense-vendor">${e.vendor}</div>`:''}</div><span class="tag">${e.category}</span><div style="text-align:right;margin-left:12px"><div class="expense-amount">${fmt(e.paid)}</div><div class="expense-planned">plán: ${fmt(e.planned)}</div></div><button class="btn btn-del" onclick="deleteExpense(${e.id})">✕</button></div>`).join('');
+}
+
+// ── TASKS ─────────────────────────────────────────
+function addTask(){
+  const text=document.getElementById('cl-text').value.trim();if(!text)return;
+  S.tasks.push({id:Date.now(),text,category:document.getElementById('cl-cat').value,deadline:document.getElementById('cl-date').value,done:false});
+  document.getElementById('cl-text').value='';document.getElementById('cl-date').value='';
+  save();renderChecklist();updateOverview();
+}
+window.addTask = addTask;
+
+function toggleTask(id){const t=S.tasks.find(t=>t.id===id);if(t)t.done=!t.done;save();renderChecklist();updateOverview();}
+window.toggleTask = toggleTask;
+
+function deleteTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();renderChecklist();updateOverview();}
+window.deleteTask = deleteTask;
+
+function renderChecklist(){
+  const el=document.getElementById('checklist-list');if(!el)return;
+  if(!S.tasks.length){el.innerHTML='<div class="empty-msg">Zatím žádné úkoly.</div>';return;}
+  const today=new Date().toISOString().split('T')[0];
+  const groups={};S.tasks.forEach(t=>{if(!groups[t.category])groups[t.category]=[];groups[t.category].push(t);});
+  el.innerHTML=Object.entries(groups).map(([cat,tasks])=>`<div class="section-hdr">${cat}</div>${tasks.map(t=>{const ov=t.deadline&&t.deadline<today&&!t.done;return`<div class="check-item ${t.done?'done':''}" onclick="toggleTask(${t.id})"><div class="check-box">${t.done?'✓':''}</div><div style="flex:1"><div class="check-text">${t.text}</div>${t.deadline?`<div class="check-deadline ${ov?'overdue':''}">📅 ${t.deadline}${ov?' — prošlý termín!':''}</div>`:''}</div><button class="btn btn-del" onclick="event.stopPropagation();deleteTask(${t.id})">✕</button></div>`;}).join('')}<div style="margin-bottom:10px"></div>`).join('');
+}
+
+// ── VENDORS ───────────────────────────────────────
+function addVendor(){
+  const name=document.getElementById('v-name').value.trim();if(!name)return;
+  S.vendors.push({id:Date.now(),name,category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,phone:document.getElementById('v-phone').value.trim(),email:document.getElementById('v-email').value.trim(),price:+document.getElementById('v-price').value||0,note:document.getElementById('v-note').value.trim()});
+  ['v-name','v-phone','v-email','v-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('v-price').value='';
+  save();renderVendors();updateOverview();
+}
+window.addVendor = addVendor;
+
+function deleteVendor(id){S.vendors=S.vendors.filter(v=>v.id!==id);save();renderVendors();updateOverview();}
+window.deleteVendor = deleteVendor;
+
+function renderVendors(){
+  const el=document.getElementById('vendor-list');if(!el)return;
+  if(!S.vendors.length){el.innerHTML='<div class="empty-msg">Zatím žádní dodavatelé.</div>';return;}
+  el.innerHTML=S.vendors.map(v=>`<div class="vendor-card"><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">${v.name}</div><div style="font-size:12px;color:var(--brown-light);line-height:1.8">${v.category}${v.phone?' · '+v.phone:''}${v.email?' · '+v.email:''}<br>${v.price?'💰 '+fmt(v.price):''}${v.note?(v.price?' · ':'')+v.note:''}</div><span class="vstatus status-${v.status}">${VSTATUS[v.status]}</span></div><button class="btn btn-del" onclick="deleteVendor(${v.id})">✕</button></div>`).join('');
+}
+
+// ── SETTINGS ──────────────────────────────────────
+function saveSettings(){S.settings.bride=document.getElementById('s-bride').value;S.settings.groom=document.getElementById('s-groom').value;save();updateCountdown();}
+window.saveSettings = saveSettings;
+
+// ── DATA EXPORT/IMPORT ────────────────────────────
+function exportData(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='svatba-pueblo-2027.json';a.click();}
+window.exportData = exportData;
+function importData(){document.getElementById('import-file').click();}
+window.importData = importData;
+function handleImport(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{S=deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)),JSON.parse(ev.target.result));save();applyUI();renderAll();alert('Data importována!');}catch(err){alert('Chyba při importu.');}};reader.readAsText(file);}
+window.handleImport = handleImport;
+function clearData(){if(!confirm('Opravdu smazat všechna data?'))return;if(CONFIGURED&&db&&dbRef){set(dbRef,DEFAULT_STATE);}else{localStorage.removeItem('pueblo-wedding-v1');}S=JSON.parse(JSON.stringify(DEFAULT_STATE));applyUI();renderAll();}
+window.clearData = clearData;
+
+// ── TABS ──────────────────────────────────────────
+function showTab(name){
+  ['overview','guests','budget','checklist','vendors','settings','guide'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  const idx=['overview','guests','budget','checklist','vendors','settings','guide'].indexOf(name);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+window.showTab = showTab;
+
+// ── RENDER ALL ────────────────────────────────────
+function renderAll(){calcCatering();renderBudgetBar();renderExpenses();renderChecklist();renderVendors();updateOverview();updateCountdown();}
+
+// ── START ─────────────────────────────────────────
+initFirebase();
+
+</script>
+</body>
+</html>
