@@ -181,7 +181,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
         <div class="countdown-badge" id="countdown-pill">Načítám…</div>
-        <div id="sync-status" style="font-size:11px;color:var(--brown-light);font-weight:700;letter-spacing:0.04em;">⏳ Inicializuji…</div>
+        <div id="sync-status" style="font-size:11px;font-weight:700;letter-spacing:0.04em;color:#999;">⏳ Inicializuji…</div>
       </div>
     </div>
     <nav class="nav">
@@ -191,7 +191,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
       <button class="nav-btn" onclick="showTab('checklist')">✅ Checklist</button>
       <button class="nav-btn" onclick="showTab('vendors')">🤝 Dodavatelé</button>
       <button class="nav-btn" onclick="showTab('settings')">⚙️ Nastavení</button>
-      <button class="nav-btn" onclick="showTab('guide')" style="color:var(--gold-dark);font-weight:700;">🔥 Firebase návod</button>
+      <button class="nav-btn" onclick="showTab('guide')" style="color:var(--gold-dark);">🔥 Firebase návod</button>
     </nav>
   </div>
 </div>
@@ -481,83 +481,53 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
     </div>
   </div>
 
-  <!-- ======================== SETUP BANNER ======================== -->
+</div><!-- end main -->
+
+
+  <!-- SETUP BANNER -->
   <div id="setup-banner" style="display:none;background:linear-gradient(135deg,#fff8e8,#fdf2d4);border:2px solid var(--gold);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
     <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--brown);margin-bottom:8px;">⚙️ Firebase není nakonfigurován</div>
-    <div style="font-size:13px;color:var(--brown-light);line-height:1.7;">Appka teď funguje lokálně (data uložena jen v tomto prohlížeči). Pro sdílení s přítelkyní klikni na záložku <strong>🔥 Firebase návod</strong> výše.</div>
+    <div style="font-size:13px;color:var(--brown-light);line-height:1.7;">Appka funguje lokálně. Pro sdílení s přítelkyní klikni na záložku <strong>🔥 Firebase návod</strong>.</div>
   </div>
 
-  <!-- ======================== GUIDE ======================== -->
+  <!-- GUIDE TAB -->
   <div id="tab-guide" class="hidden">
     <div class="card">
       <div class="card-title">🔥 Jak nastavit Firebase sync — krok za krokem</div>
       <div style="font-size:13px;line-height:1.9;color:var(--brown);">
-        <p style="margin-bottom:16px;color:var(--brown-light);font-style:italic;">Celé nastavení zabere cca 15–20 minut. Vše je zdarma, nepotřebuješ kreditní kartu.</p>
-
+        <p style="margin-bottom:16px;color:var(--brown-light);font-style:italic;">Celé nastavení zabere cca 15 minut. Vše je zdarma.</p>
         <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
           <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 1 — Vytvoř Firebase projekt</div>
-          1. Jdi na <strong>console.firebase.google.com</strong> (přihlas se Google účtem)<br>
+          1. Jdi na <strong>console.firebase.google.com</strong><br>
           2. Klikni <strong>„Add project"</strong><br>
-          3. Název projektu: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-2027</code> (nebo cokoliv)<br>
-          4. Google Analytics: <strong>vypni</strong> (není potřeba) → <strong>Create project</strong>
+          3. Název: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-2027</code><br>
+          4. Google Analytics: vypni → <strong>Create project</strong>
         </div>
-
         <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
           <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 2 — Vytvoř Realtime Database</div>
-          1. V levém menu klikni <strong>„Build" → „Realtime Database"</strong><br>
-          2. Klikni <strong>„Create database"</strong><br>
-          3. Lokace: vyber <strong>Europe-west1 (Belgium)</strong><br>
-          4. Security rules: vyber <strong>„Start in test mode"</strong> → Enable<br>
-          <div style="background:#fff3cd;border-radius:6px;padding:8px;margin-top:8px;font-size:12px;">⚠️ Test mode expiruje za 30 dní — pak musíš v záložce Rules změnit datum nebo přidat auth. Připomenu ti níže.</div>
+          1. Levé menu: <strong>Build → Realtime Database</strong><br>
+          2. <strong>Create database</strong><br>
+          3. Lokace: <strong>europe-west1 (Belgium)</strong><br>
+          4. Security rules: <strong>Start in test mode</strong> → Enable
         </div>
-
         <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
           <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 3 — Získej konfiguraci</div>
-          1. V Project Overview klikni na ikonu <strong>&lt;/&gt; (Web)</strong><br>
-          2. App nickname: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-web</code> → Register app<br>
-          3. Uvidíš blok kódu s <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">firebaseConfig = { ... }</code><br>
-          4. <strong>Zkopíruj celý obsah složených závorek</strong> — budeš ho potřebovat v dalším kroku
+          1. Project Overview → ikona <strong>&lt;/&gt; (Web)</strong><br>
+          2. App nickname: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-web</code> → Register<br>
+          3. Zkopíruj celý blok <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">firebaseConfig = { ... }</code>
         </div>
-
         <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 4 — Vytvoř GitHub repozitář</div>
-          1. Jdi na <strong>github.com</strong> → New repository<br>
-          2. Název: <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-planovac</code> → <strong>Public</strong> → Create<br>
-          3. Klikni <strong>„uploading an existing file"</strong><br>
-          4. Nahraj soubor <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svatebni-planovac-pueblo.html</code><br>
-          5. Commit changes
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 4 — Vlož config do souboru na GitHubu</div>
+          1. GitHub → klikni na <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">index.html</code><br>
+          2. Ikona tužky ✏️ → Edit<br>
+          3. Najdi <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">apiKey: "TVUJ_API_KEY"</code><br>
+          4. Nahraď celý blok FIREBASE_CONFIG svými hodnotami<br>
+          5. Commit changes → Vercel nasadí za 30 sekund
         </div>
-
-        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 5 — Vlož Firebase config do souboru</div>
-          1. Na GitHubu klikni na soubor → ikona tužky ✏️ (Edit)<br>
-          2. Najdi sekci <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">FIREBASE_CONFIG = {</code><br>
-          3. Nahraď obsah svou zkopírovanou konfigurací z Kroku 3<br>
-          4. <strong>Commit changes</strong>
-        </div>
-
-        <div style="background:var(--ivory);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--gold);">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">KROK 6 — Nasaď na Vercel</div>
-          1. Jdi na <strong>vercel.com</strong> → Sign up with GitHub<br>
-          2. <strong>„Add New Project"</strong> → Import svůj repozitář<br>
-          3. Vše nech výchozí → <strong>Deploy</strong><br>
-          4. Dostaneš URL jako <code style="background:var(--cream);padding:1px 6px;border-radius:4px;">svadba-planovac.vercel.app</code><br>
-          5. <strong>Tuto URL pošli přítelkyni</strong> — oba uvidíte stejná data!
-        </div>
-
-        <div style="background:linear-gradient(135deg,#e8f5e9,#f0fff0);border-radius:10px;padding:16px;margin-bottom:16px;border-left:4px solid var(--sage);">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;color:var(--sage);">✅ Jak upravovat kód v budoucnu</div>
-          1. Jdi na GitHub → klikni na soubor → ✏️ Edit<br>
-          2. Uprav co potřebuješ → Commit changes<br>
-          3. Vercel automaticky nasadí novou verzi za ~30 sekund<br>
-          <div style="margin-top:8px;font-size:12px;color:var(--brown-light);">💡 Nebo mi sem pošli co chceš změnit a já upravím kód — ty jen zkopíruješ na GitHub.</div>
-        </div>
-
-        <div style="background:#fff3cd;border-radius:10px;padding:16px;border-left:4px solid #c5a55a;">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;">⏰ Nezapomeň po 30 dnech — Firebase Rules</div>
-          V Firebase console → Realtime Database → <strong>Rules</strong> → změň datum:<br>
-          <code style="background:var(--cream);padding:4px 8px;border-radius:4px;display:block;margin-top:8px;font-size:12px;">"rules": {".read": "now < 1800000000000", ".write": "now < 1800000000000"}</code>
-          <div style="font-size:12px;color:var(--brown-light);margin-top:6px;">Číslo 1800000000000 = rok 2027 (stačí nechat tak)</div>
+        <div style="background:linear-gradient(135deg,#e8f5e9,#f0fff0);border-radius:10px;padding:16px;border-left:4px solid var(--sage);">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:10px;color:var(--sage);">✅ Jak upravovat appku v budoucnu</div>
+          GitHub → klikni na soubor → ✏️ Edit → uprav → Commit<br>
+          Nebo mi sem napiš co chceš změnit a já upravím kód 💍
         </div>
       </div>
     </div>
@@ -565,44 +535,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 
 </div><!-- end main -->
 
-
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue, set, off } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-
-// ═══════════════════════════════════════════════════
-//  🔥 FIREBASE KONFIGURACE — vyplň po nastavení
-// ═══════════════════════════════════════════════════
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDMvyQXUnbehTlHicTIVchzNkIENhKkMLQ",
-  authDomain: "svatba-c72b8.firebaseapp.com",
-  projectId: "svatba-c72b8",
-  storageBucket: "svatba-c72b8.firebasestorage.app",
-  messagingSenderId: "376748850388",
-  appId: "1:376748850388:web:5ea89c25b1e39635810f41",
-  measurementId: "G-LTJ59125C6"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-// ═══════════════════════════════════════════════════
-
-const CONFIGURED = !FIREBASE_CONFIG.apiKey.includes('TVUJ');
-
+<!-- HLAVNÍ SCRIPT — funguje vždy, bez závislosti na Firebase -->
+<script>
 const CAT_COLORS={'Venue & Pronájem':'#c5a55a','Catering':'#e8a87c','Nápoje':'#9b8ec4','Fotograf':'#6aacb8','Kameraman':'#7aacb8','Hudba / DJ':'#e87c9b','Květiny & Dekorace':'#8ec48a','Šaty & Oblek':'#c4a88e','Dort & Sladký bar':'#c48e8e','Dopravu':'#8eacc4','Líčení & Vlasy':'#c48ec4','Prsteny':'#c4b88e','Ubytování':'#aab8c4','Líbánky':'#d4a0c4','Jiné':'#b0b0b0'};
 const VSTATUS={looking:'Hledáme',contacted:'Kontaktováno',negotiating:'Jednáme',confirmed:'Potvrzeno ✓'};
 
-const DEFAULT_STATE = {
+const TABS=['overview','guests','budget','checklist','vendors','settings','guide'];
+
+const DEFAULT_STATE={
   settings:{bride:'',groom:''},
   guests:{adults:0,teens:0,children:0,babies:0,pFoodAdult:1890,pFoodTeen:1890,pFoodChild:1320,pDrinkAdult:640,pDrinkChild:380},
   budget:0,
@@ -615,152 +555,117 @@ const DEFAULT_STATE = {
     {id:101,text:'Kontaktovat koordinátorku Marie Glierovou (marie@uslamy.cz)',category:'Venue',deadline:'',done:false},
     {id:102,text:'Složit kauci 20 000 Kč pro závaznou rezervaci termínu',category:'Venue',deadline:'',done:false},
     {id:103,text:'Zaslat zadávací formulář 14 dní před svatbou',category:'Venue',deadline:'2027-05-08',done:false},
-    {id:104,text:'Rezervovat ubytování pro hosty (doporučeno co nejdříve)',category:'Ubytování',deadline:'',done:false},
+    {id:104,text:'Rezervovat ubytování pro hosty (co nejdříve)',category:'Ubytování',deadline:'',done:false},
     {id:105,text:'Domluvit fotografa / kameramana',category:'Fotograf',deadline:'',done:false},
     {id:106,text:'Vybrat a objednat DJ / kapelu',category:'Hudba',deadline:'',done:false},
-    {id:107,text:'Kontaktovat matriku pro úřední sňatek: Šárka Smolková +420 703 141 659',category:'Dokumenty & Matrika',deadline:'',done:false},
+    {id:107,text:'Kontaktovat matriku: Šárka Smolková +420 703 141 659',category:'Dokumenty & Matrika',deadline:'',done:false},
     {id:108,text:'Objednat svatební dort a sweetbar (lze dovézt den předem)',category:'Jiné',deadline:'',done:false},
     {id:109,text:'Rozeslat pozvánky hostům',category:'Hosté & Pozvánky',deadline:'',done:false},
     {id:110,text:'Potvrdit přesný počet hostů (14 dní před → kalkulace se nemění)',category:'Catering & Nápoje',deadline:'2027-05-08',done:false}
   ],
   vendors:[
     {id:201,name:'Mlýn vodníka Slámy',category:'Venue',status:'confirmed',phone:'+420 606 718 647',email:'marie@uslamy.cz',price:28500,note:'Pronájem + obřad + zvučení'},
-    {id:202,name:'NESTÁDO (koně & poníci)',category:'Jiné',status:'looking',phone:'+420 606 786 676',email:'info@nestado.cz',price:0,note:'Aktivity s koňmi, kontakt: Monika Nestrojová'}
+    {id:202,name:'NESTÁDO (koně & poníci)',category:'Jiné',status:'looking',phone:'+420 606 786 676',email:'info@nestado.cz',price:0,note:'Monika Nestrojová'}
   ]
 };
 
 let S = JSON.parse(JSON.stringify(DEFAULT_STATE));
-let db = null;
-let dbRef = null;
-let saveTimer = null;
-let isRemoteUpdate = false;
 
-// ── FIREBASE INIT ──────────────────────────────────
-function initFirebase() {
-  if (!CONFIGURED) {
-    showSetupBanner();
-    loadFromLocalStorage();
-    return;
-  }
-  try {
-    const app = initializeApp(FIREBASE_CONFIG);
-    db = getDatabase(app);
-    dbRef = ref(db, 'wedding');
-    setSyncStatus('connecting');
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        isRemoteUpdate = true;
-        S = deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), data);
-        applyUI();
-        renderAll();
-        isRemoteUpdate = false;
-      } else {
-        // First time — push defaults
-        saveToFirebase();
-      }
-      setSyncStatus('online');
-    }, (err) => {
-      console.error('Firebase error:', err);
-      setSyncStatus('offline');
-      loadFromLocalStorage();
-    });
-  } catch(e) {
-    console.error('Firebase init error:', e);
-    setSyncStatus('offline');
-    loadFromLocalStorage();
-  }
-}
+// ── FIREBASE BRIDGE (vyplní firebase-init.js) ──────
+window._firebaseSave = null; // bude nastaveno Firebase scriptem
 
-function deepMerge(target, source) {
-  if (typeof source !== 'object' || source === null) return source;
-  const result = Array.isArray(source) ? [] : Object.assign({}, target);
-  for (const key of Object.keys(source)) {
-    result[key] = (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]))
-      ? deepMerge(target[key] || {}, source[key])
-      : source[key];
-  }
-  return result;
-}
-
-// ── SAVE ──────────────────────────────────────────
+// ── ULOŽENÍ ────────────────────────────────────────
+let _saveTimer = null;
 function save() {
-  if (CONFIGURED && db) {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(saveToFirebase, 600);
-  } else {
-    try { localStorage.setItem('pueblo-wedding-v1', JSON.stringify(S)); } catch(e) {}
+  // Firebase pokud je dostupné
+  if (window._firebaseSave) {
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(() => window._firebaseSave(S), 600);
   }
+  // Vždy taky localStorage jako záloha
+  try { localStorage.setItem('pueblo-wedding-v1', JSON.stringify(S)); } catch(e) {}
 }
 
-function saveToFirebase() {
-  if (!db || !dbRef) return;
-  set(dbRef, JSON.parse(JSON.stringify(S))).catch(e => {
-    console.error('Save error:', e);
-    setSyncStatus('offline');
-  });
-}
-
-function loadFromLocalStorage() {
+function loadLocal() {
   try {
     const d = localStorage.getItem('pueblo-wedding-v1');
-    if (d) S = deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), JSON.parse(d));
+    if (d) {
+      const parsed = JSON.parse(d);
+      S = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), parsed);
+    }
   } catch(e) {}
   applyUI();
   renderAll();
 }
 
-// ── SYNC STATUS INDICATOR ─────────────────────────
-function setSyncStatus(status) {
+// ── SYNC STATUS ────────────────────────────────────
+function setSyncStatus(status, text) {
   const el = document.getElementById('sync-status');
   if (!el) return;
-  const map = {
-    connecting: {text:'🔄 Připojuji…', color:'#c5a55a'},
-    online:     {text:'🟢 Synced', color:'#4a8a4a'},
-    offline:    {text:'🔴 Offline', color:'#c06060'}
-  };
-  const s = map[status] || map.offline;
-  el.textContent = s.text;
-  el.style.color = s.color;
+  const colors = {online:'#4a8a4a', offline:'#c06060', connecting:'#c5a55a'};
+  el.textContent = text;
+  el.style.color = colors[status] || '#999';
+}
+window.setSyncStatus = setSyncStatus;
+
+// ── APPLY STATE TO FORM FIELDS ────────────────────
+function applyUI() {
+  const f = (id, v) => { const e = document.getElementById(id); if (e) e.value = (v !== undefined && v !== null) ? v : ''; };
+  f('s-bride', S.settings.bride); f('s-groom', S.settings.groom);
+  f('g-adults', S.guests.adults||0); f('g-teens', S.guests.teens||0);
+  f('g-children', S.guests.children||0); f('g-babies', S.guests.babies||0);
+  f('p-food-adult', S.guests.pFoodAdult||1890); f('p-food-teen', S.guests.pFoodTeen||1890);
+  f('p-food-child', S.guests.pFoodChild||1320);
+  f('p-drink-adult', S.guests.pDrinkAdult||640); f('p-drink-child', S.guests.pDrinkChild||380);
+  f('b-budget', S.budget||0);
+}
+window.applyUI = applyUI;
+
+// Volat z Firebase scriptu po příjmu remote dat
+window.applyRemoteState = function(remoteS) {
+  S = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), remoteS);
+  applyUI();
+  renderAll();
+};
+
+function fmt(n) { return Number(n||0).toLocaleString('cs-CZ') + ' Kč'; }
+
+// ── TABS ───────────────────────────────────────────
+function showTab(name) {
+  TABS.forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.classList.add('hidden');
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + name);
+  if (el) el.classList.remove('hidden');
+  const idx = TABS.indexOf(name);
+  const btns = document.querySelectorAll('.nav-btn');
+  if (btns[idx]) btns[idx].classList.add('active');
 }
 
-// ── SETUP BANNER ──────────────────────────────────
-function showSetupBanner() {
-  const banner = document.getElementById('setup-banner');
-  if (banner) banner.style.display = 'block';
+// ── COUNTDOWN ──────────────────────────────────────
+function updateCountdown() {
+  const wedding = new Date(2027, 4, 22); // Měsíc je 0-indexovaný: 4 = Květen
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((wedding - today) / 86400000);
+  const pill = document.getElementById('countdown-pill');
+  const heroD = document.getElementById('hero-days');
+  let txt;
+  if (diff > 0)      txt = 'Za ' + diff + ' dní 💍';
+  else if (diff===0) txt = '🎊 Dnes je ten den!';
+  else               txt = 'Gratulujeme! 🎉';
+  if (pill) pill.textContent = txt;
+  if (heroD) heroD.textContent = diff > 0 ? diff : (diff===0 ? '0' : '✓');
+  const hn = document.getElementById('hero-names');
+  if (hn) {
+    const b = S.settings.bride, g = S.settings.groom;
+    if (b || g) hn.textContent = (b||'?') + ' & ' + (g||'?');
+  }
 }
 
-// ── UI ────────────────────────────────────────────
-function applyUI(){
-  const f=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};
-  f('s-bride',S.settings.bride);f('s-groom',S.settings.groom);
-  f('g-adults',S.guests.adults||0);f('g-teens',S.guests.teens||0);
-  f('g-children',S.guests.children||0);f('g-babies',S.guests.babies||0);
-  f('p-food-adult',S.guests.pFoodAdult||1890);f('p-food-teen',S.guests.pFoodTeen||1890);
-  f('p-food-child',S.guests.pFoodChild||1320);
-  f('p-drink-adult',S.guests.pDrinkAdult||640);f('p-drink-child',S.guests.pDrinkChild||380);
-  f('b-budget',S.budget||0);
-}
-
-function fmt(n){return Number(n||0).toLocaleString('cs-CZ')+' Kč';}
-
-// ── COUNTDOWN ─────────────────────────────────────
-function updateCountdown(){
-  const w='2027-05-22'.split('-');
-  const wedding=new Date(+w[0],+w[1]-1,+w[2]);
-  const today=new Date();today.setHours(0,0,0,0);
-  const diff=Math.round((wedding-today)/86400000);
-  const pill=document.getElementById('countdown-pill');
-  const heroD=document.getElementById('hero-days');
-  if(diff>0){if(pill)pill.textContent=`Za ${diff} dní 💍`;if(heroD)heroD.textContent=diff;}
-  else if(diff===0){if(pill)pill.textContent='🎊 Dnes je ten den!';if(heroD)heroD.textContent='0';}
-  else{if(pill)pill.textContent='Gratulujeme! 🎉';if(heroD)heroD.textContent='✓';}
-  const hn=document.getElementById('hero-names');
-  if(hn){const b=S.settings.bride,g=S.settings.groom;if(b||g)hn.textContent=(b||'?')+' & '+(g||'?');}
-}
-
-// ── GUESTS ────────────────────────────────────────
-function calcCatering(){
+// ── GUESTS & CATERING ──────────────────────────────
+function calcCatering() {
   const a=+document.getElementById('g-adults').value||0;
   const t=+document.getElementById('g-teens').value||0;
   const c=+document.getElementById('g-children').value||0;
@@ -775,7 +680,7 @@ function calcCatering(){
   const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   s('gp-adults',a);s('gp-teens',t);s('gp-children',c);s('gp-total',total);
   s('ov-adults',a);s('ov-teens',t);s('ov-children',c);s('ov-babies',b);
-  const tA=(pFA+pDA)*a,tT=(pFT+pDC)*t,tC=(pFC+pDC)*c;
+  const tA=(pFA+pDA)*a, tT=(pFT+pDC)*t, tC=(pFC+pDC)*c;
   const grand=tA+tT+tC;
   s('ct-a-n',a);s('ct-a-f',fmt(pFA));s('ct-a-d',fmt(pDA));s('ct-a-pp',fmt(pFA+pDA));s('ct-a-t',fmt(tA));
   s('ct-t-n',t);s('ct-t-f',fmt(pFT));s('ct-t-d',fmt(pDC));s('ct-t-pp',fmt(pFT+pDC));s('ct-t-t',fmt(tT));
@@ -783,145 +688,209 @@ function calcCatering(){
   s('ct-b-n',b);s('ct-grand',fmt(grand));
   const oc=document.getElementById('ov-catering-summary');
   if(oc){
-    if(total===0){oc.innerHTML='<div class="empty-msg">Zadejte hosty v záložce Hosté</div>';}
+    if(!total){oc.innerHTML='<div class="empty-msg">Zadejte hosty v záložce Hosté</div>';}
     else{oc.innerHTML=`
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--cream)"><span>🍽️ Catering celkem</span><strong>${fmt(grand)}</strong></div>
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--cream)"><span>👥 Celkem hostů</span><strong>${total}</strong></div>
-      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:var(--brown-light)"><span>Průměr / host</span><span>${total>0?fmt(Math.round(grand/total)):'—'}</span></div>
-      <div class="total-row" style="padding-top:12px;margin-top:4px;"><span class="total-label" style="font-size:16px">Catering</span><span style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold-dark)">${fmt(grand)}</span></div>`;}
+      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:var(--brown-light)"><span>Průměr / host</span><span>${fmt(Math.round(grand/total))}</span></div>
+      <div class="total-row" style="padding-top:12px;"><span class="total-label" style="font-size:16px">Catering</span><span style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold-dark)">${fmt(grand)}</span></div>`;}
   }
-  save();updateOverview();
+  save(); updateOverview();
 }
-window.calcCatering = calcCatering;
 
-// ── BUDGET ────────────────────────────────────────
-function saveBudget(){S.budget=+document.getElementById('b-budget').value||0;save();renderBudgetBar();updateOverview();}
-window.saveBudget = saveBudget;
+// ── BUDGET ─────────────────────────────────────────
+function saveBudget() {
+  S.budget = +document.getElementById('b-budget').value||0;
+  save(); renderBudgetBar(); updateOverview();
+}
 
-function renderBudgetBar(){
+function renderBudgetBar() {
   const spent=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
-  const budget=S.budget||0;const rem=budget-spent;
+  const budget=S.budget||0; const rem=budget-spent;
   const pct=budget>0?Math.min(100,(spent/budget)*100):0;
-  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  s('b-paid-lbl',fmt(spent));
-  const re=document.getElementById('b-rem-lbl');if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
-  const bar=document.getElementById('b-bar');if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
+  const bl=document.getElementById('b-paid-lbl'); if(bl) bl.textContent=fmt(spent);
+  const re=document.getElementById('b-rem-lbl');
+  if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
+  const bar=document.getElementById('b-bar');
+  if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
 }
 
-function updateOverview(){
+// ── OVERVIEW ───────────────────────────────────────
+function updateOverview() {
   const spent=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
-  const budget=S.budget||0;const rem=budget-spent;
+  const budget=S.budget||0; const rem=budget-spent;
   const pct=budget>0?Math.min(100,(spent/budget)*100):0;
   const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   s('ov-budget',fmt(budget));s('ov-spent-lbl',fmt(spent)+' zaplaceno');s('ov-pct',Math.round(pct)+'%');
-  const re=document.getElementById('ov-remaining');if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
-  const bar=document.getElementById('ov-bar');if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
-  const cats={};S.expenses.forEach(e=>{if(!cats[e.category])cats[e.category]={planned:0,paid:0};cats[e.category].planned+=e.planned||0;cats[e.category].paid+=e.paid||0;});
+  const re=document.getElementById('ov-remaining');
+  if(re){re.textContent='Zbývá: '+fmt(rem);re.className=rem<0?'overbudget':'onbudget';}
+  const bar=document.getElementById('ov-bar');
+  if(bar){bar.style.width=pct+'%';bar.className='progress-fill'+(pct>=100?' ovr':'');}
+  // expenses by category
+  const cats={};
+  S.expenses.forEach(e=>{if(!cats[e.category])cats[e.category]={planned:0,paid:0};cats[e.category].planned+=e.planned||0;cats[e.category].paid+=e.paid||0;});
   const oe=document.getElementById('ov-expenses');
-  if(oe){if(!Object.keys(cats).length)oe.innerHTML='<div class="empty-msg">Žádné výdaje</div>';
-  else oe.innerHTML=Object.entries(cats).map(([cat,v])=>`<div class="expense-item"><div class="expense-dot" style="background:${CAT_COLORS[cat]||'#ccc'}"></div><div class="expense-name">${cat}</div><div style="text-align:right"><div class="expense-amount">${fmt(v.paid)}</div><div class="expense-planned">plán: ${fmt(v.planned)}</div></div></div>`).join('');}
+  if(oe){
+    if(!Object.keys(cats).length) oe.innerHTML='<div class="empty-msg">Žádné výdaje</div>';
+    else oe.innerHTML=Object.entries(cats).map(([cat,v])=>`<div class="expense-item"><div class="expense-dot" style="background:${CAT_COLORS[cat]||'#ccc'}"></div><div class="expense-name">${cat}</div><div style="text-align:right"><div class="expense-amount">${fmt(v.paid)}</div><div class="expense-planned">plán: ${fmt(v.planned)}</div></div></div>`).join('');
+  }
+  // tasks
   const ot=document.getElementById('ov-tasks');
-  if(ot){const tot=S.tasks.length,don=S.tasks.filter(t=>t.done).length;
-  if(!tot)ot.innerHTML='<div class="empty-msg">Žádné úkoly</div>';
-  else{const p=Math.round(don/tot*100);ot.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${don}/${tot}</div><div style="font-size:12px;color:var(--brown-light);margin-bottom:8px">splněno (${p}%)</div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:linear-gradient(90deg,var(--sage),#6aac8a)"></div></div>`;}}
+  if(ot){
+    const tot=S.tasks.length, don=S.tasks.filter(t=>t.done).length;
+    if(!tot) ot.innerHTML='<div class="empty-msg">Žádné úkoly</div>';
+    else { const p=Math.round(don/tot*100); ot.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${don}/${tot}</div><div style="font-size:12px;color:var(--brown-light);margin-bottom:8px">splněno (${p}%)</div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:linear-gradient(90deg,var(--sage),#6aac8a)"></div></div>`; }
+  }
+  // vendors
   const ov=document.getElementById('ov-vendors');
-  if(ov){if(!S.vendors.length)ov.innerHTML='<div class="empty-msg">Žádní dodavatelé</div>';
-  else{const conf=S.vendors.filter(v=>v.status==='confirmed').length;ov.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${conf}/${S.vendors.length}</div><div style="font-size:12px;color:var(--brown-light)">potvrzeno</div><div style="margin-top:8px;">${S.vendors.slice(0,3).map(v=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--cream)">${v.name} <span class="vstatus status-${v.status}" style="font-size:10px">${VSTATUS[v.status]}</span></div>`).join('')}</div>`;}}
+  if(ov){
+    if(!S.vendors.length) ov.innerHTML='<div class="empty-msg">Žádní dodavatelé</div>';
+    else { const conf=S.vendors.filter(v=>v.status==='confirmed').length; ov.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold-dark)">${conf}/${S.vendors.length}</div><div style="font-size:12px;color:var(--brown-light)">potvrzeno</div><div style="margin-top:8px;">${S.vendors.slice(0,3).map(v=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--cream)">${v.name} <span class="vstatus status-${v.status}" style="font-size:10px">${VSTATUS[v.status]}</span></div>`).join('')}</div>`; }
+  }
 }
 
-// ── EXPENSES ──────────────────────────────────────
-function addExpense(){
-  const name=document.getElementById('b-name').value.trim();if(!name)return;
+// ── EXPENSES ───────────────────────────────────────
+function addExpense() {
+  const name=document.getElementById('b-name').value.trim(); if(!name) return;
   S.expenses.push({id:Date.now(),name,category:document.getElementById('b-cat').value,planned:+document.getElementById('b-planned').value||0,paid:+document.getElementById('b-paid').value||0,vendor:document.getElementById('b-vendor').value.trim()});
   ['b-name','b-planned','b-paid','b-vendor'].forEach(id=>document.getElementById(id).value='');
-  save();renderExpenses();renderBudgetBar();updateOverview();
+  save(); renderExpenses(); renderBudgetBar(); updateOverview();
 }
-window.addExpense = addExpense;
-
-function deleteExpense(id){S.expenses=S.expenses.filter(e=>e.id!==id);save();renderExpenses();renderBudgetBar();updateOverview();}
-window.deleteExpense = deleteExpense;
-
-function renderExpenses(){
-  const el=document.getElementById('expense-list'),te=document.getElementById('expense-totals');if(!el)return;
+function deleteExpense(id) { S.expenses=S.expenses.filter(e=>e.id!==id); save(); renderExpenses(); renderBudgetBar(); updateOverview(); }
+function renderExpenses() {
+  const el=document.getElementById('expense-list'), te=document.getElementById('expense-totals'); if(!el) return;
   if(!S.expenses.length){el.innerHTML='<div class="empty-msg">Zatím žádné výdaje.</div>';if(te)te.style.display='none';return;}
-  if(te)te.style.display='flex';
-  const tp=S.expenses.reduce((s,e)=>s+(e.planned||0),0),tpd=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
-  const p1=document.getElementById('b-total-planned'),p2=document.getElementById('b-total-paid');
-  if(p1)p1.textContent=fmt(tp);if(p2)p2.textContent=fmt(tpd);
+  if(te) te.style.display='flex';
+  const tp=S.expenses.reduce((s,e)=>s+(e.planned||0),0), tpd=S.expenses.reduce((s,e)=>s+(e.paid||0),0);
+  const p1=document.getElementById('b-total-planned'), p2=document.getElementById('b-total-paid');
+  if(p1) p1.textContent=fmt(tp); if(p2) p2.textContent=fmt(tpd);
   el.innerHTML=S.expenses.map(e=>`<div class="expense-item"><div class="expense-dot" style="background:${CAT_COLORS[e.category]||'#ccc'}"></div><div style="flex:1"><div class="expense-name">${e.name}</div>${e.vendor?`<div class="expense-vendor">${e.vendor}</div>`:''}</div><span class="tag">${e.category}</span><div style="text-align:right;margin-left:12px"><div class="expense-amount">${fmt(e.paid)}</div><div class="expense-planned">plán: ${fmt(e.planned)}</div></div><button class="btn btn-del" onclick="deleteExpense(${e.id})">✕</button></div>`).join('');
 }
 
-// ── TASKS ─────────────────────────────────────────
-function addTask(){
-  const text=document.getElementById('cl-text').value.trim();if(!text)return;
+// ── TASKS ──────────────────────────────────────────
+function addTask() {
+  const text=document.getElementById('cl-text').value.trim(); if(!text) return;
   S.tasks.push({id:Date.now(),text,category:document.getElementById('cl-cat').value,deadline:document.getElementById('cl-date').value,done:false});
-  document.getElementById('cl-text').value='';document.getElementById('cl-date').value='';
-  save();renderChecklist();updateOverview();
+  document.getElementById('cl-text').value=''; document.getElementById('cl-date').value='';
+  save(); renderChecklist(); updateOverview();
 }
-window.addTask = addTask;
-
-function toggleTask(id){const t=S.tasks.find(t=>t.id===id);if(t)t.done=!t.done;save();renderChecklist();updateOverview();}
-window.toggleTask = toggleTask;
-
-function deleteTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();renderChecklist();updateOverview();}
-window.deleteTask = deleteTask;
-
-function renderChecklist(){
-  const el=document.getElementById('checklist-list');if(!el)return;
+function toggleTask(id) { const t=S.tasks.find(t=>t.id===id); if(t) t.done=!t.done; save(); renderChecklist(); updateOverview(); }
+function deleteTask(id) { S.tasks=S.tasks.filter(t=>t.id!==id); save(); renderChecklist(); updateOverview(); }
+function renderChecklist() {
+  const el=document.getElementById('checklist-list'); if(!el) return;
   if(!S.tasks.length){el.innerHTML='<div class="empty-msg">Zatím žádné úkoly.</div>';return;}
   const today=new Date().toISOString().split('T')[0];
-  const groups={};S.tasks.forEach(t=>{if(!groups[t.category])groups[t.category]=[];groups[t.category].push(t);});
+  const groups={};
+  S.tasks.forEach(t=>{if(!groups[t.category])groups[t.category]=[];groups[t.category].push(t);});
   el.innerHTML=Object.entries(groups).map(([cat,tasks])=>`<div class="section-hdr">${cat}</div>${tasks.map(t=>{const ov=t.deadline&&t.deadline<today&&!t.done;return`<div class="check-item ${t.done?'done':''}" onclick="toggleTask(${t.id})"><div class="check-box">${t.done?'✓':''}</div><div style="flex:1"><div class="check-text">${t.text}</div>${t.deadline?`<div class="check-deadline ${ov?'overdue':''}">📅 ${t.deadline}${ov?' — prošlý termín!':''}</div>`:''}</div><button class="btn btn-del" onclick="event.stopPropagation();deleteTask(${t.id})">✕</button></div>`;}).join('')}<div style="margin-bottom:10px"></div>`).join('');
 }
 
-// ── VENDORS ───────────────────────────────────────
-function addVendor(){
-  const name=document.getElementById('v-name').value.trim();if(!name)return;
+// ── VENDORS ────────────────────────────────────────
+function addVendor() {
+  const name=document.getElementById('v-name').value.trim(); if(!name) return;
   S.vendors.push({id:Date.now(),name,category:document.getElementById('v-cat').value,status:document.getElementById('v-status').value,phone:document.getElementById('v-phone').value.trim(),email:document.getElementById('v-email').value.trim(),price:+document.getElementById('v-price').value||0,note:document.getElementById('v-note').value.trim()});
-  ['v-name','v-phone','v-email','v-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('v-price').value='';
-  save();renderVendors();updateOverview();
+  ['v-name','v-phone','v-email','v-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('v-price').value='';
+  save(); renderVendors(); updateOverview();
 }
-window.addVendor = addVendor;
-
-function deleteVendor(id){S.vendors=S.vendors.filter(v=>v.id!==id);save();renderVendors();updateOverview();}
-window.deleteVendor = deleteVendor;
-
-function renderVendors(){
-  const el=document.getElementById('vendor-list');if(!el)return;
+function deleteVendor(id) { S.vendors=S.vendors.filter(v=>v.id!==id); save(); renderVendors(); updateOverview(); }
+function renderVendors() {
+  const el=document.getElementById('vendor-list'); if(!el) return;
   if(!S.vendors.length){el.innerHTML='<div class="empty-msg">Zatím žádní dodavatelé.</div>';return;}
   el.innerHTML=S.vendors.map(v=>`<div class="vendor-card"><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">${v.name}</div><div style="font-size:12px;color:var(--brown-light);line-height:1.8">${v.category}${v.phone?' · '+v.phone:''}${v.email?' · '+v.email:''}<br>${v.price?'💰 '+fmt(v.price):''}${v.note?(v.price?' · ':'')+v.note:''}</div><span class="vstatus status-${v.status}">${VSTATUS[v.status]}</span></div><button class="btn btn-del" onclick="deleteVendor(${v.id})">✕</button></div>`).join('');
 }
 
-// ── SETTINGS ──────────────────────────────────────
-function saveSettings(){S.settings.bride=document.getElementById('s-bride').value;S.settings.groom=document.getElementById('s-groom').value;save();updateCountdown();}
-window.saveSettings = saveSettings;
-
-// ── DATA EXPORT/IMPORT ────────────────────────────
-function exportData(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='svatba-pueblo-2027.json';a.click();}
-window.exportData = exportData;
-function importData(){document.getElementById('import-file').click();}
-window.importData = importData;
-function handleImport(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{S=deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)),JSON.parse(ev.target.result));save();applyUI();renderAll();alert('Data importována!');}catch(err){alert('Chyba při importu.');}};reader.readAsText(file);}
-window.handleImport = handleImport;
-function clearData(){if(!confirm('Opravdu smazat všechna data?'))return;if(CONFIGURED&&db&&dbRef){set(dbRef,DEFAULT_STATE);}else{localStorage.removeItem('pueblo-wedding-v1');}S=JSON.parse(JSON.stringify(DEFAULT_STATE));applyUI();renderAll();}
-window.clearData = clearData;
-
-// ── TABS ──────────────────────────────────────────
-function showTab(name){
-  ['overview','guests','budget','checklist','vendors','settings','guide'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.remove('hidden');
-  const idx=['overview','guests','budget','checklist','vendors','settings','guide'].indexOf(name);
-  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+// ── SETTINGS ───────────────────────────────────────
+function saveSettings() {
+  S.settings.bride=document.getElementById('s-bride').value;
+  S.settings.groom=document.getElementById('s-groom').value;
+  save(); updateCountdown();
 }
-window.showTab = showTab;
 
-// ── RENDER ALL ────────────────────────────────────
-function renderAll(){calcCatering();renderBudgetBar();renderExpenses();renderChecklist();renderVendors();updateOverview();updateCountdown();}
+// ── DATA ───────────────────────────────────────────
+function exportData(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='svatba-pueblo-2027.json';a.click();}
+function importData(){document.getElementById('import-file').click();}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{try{const p=JSON.parse(ev.target.result);S=Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)),p);save();applyUI();renderAll();alert('Data importována!');}catch(err){alert('Chyba při importu.');}};
+  reader.readAsText(file);
+}
+function clearData(){
+  if(!confirm('Opravdu smazat všechna data?')) return;
+  S=JSON.parse(JSON.stringify(DEFAULT_STATE));
+  localStorage.removeItem('pueblo-wedding-v1');
+  if(window._firebaseClear) window._firebaseClear();
+  applyUI(); renderAll();
+}
 
-// ── START ─────────────────────────────────────────
-initFirebase();
+// ── RENDER ALL ─────────────────────────────────────
+function renderAll() {
+  calcCatering(); renderBudgetBar(); renderExpenses();
+  renderChecklist(); renderVendors(); updateOverview(); updateCountdown();
+}
 
+// ── INIT ───────────────────────────────────────────
+loadLocal();
+setSyncStatus('offline', '🔴 Offline — Firebase není nastaven');
+
+</script>
+
+<!-- FIREBASE SCRIPT — načte se samostatně, neblokuje zbytek appky -->
+<script type="module">
+const FIREBASE_CONFIG = {
+  apiKey:            "TVUJ_API_KEY",
+  authDomain:        "TVUJ_PROJECT.firebaseapp.com",
+  databaseURL:       "https://TVUJ_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "TVUJ_PROJECT",
+  storageBucket:     "TVUJ_PROJECT.appspot.com",
+  messagingSenderId: "TVOJE_SENDER_ID",
+  appId:             "TVOJE_APP_ID"
+};
+
+const CONFIGURED = !FIREBASE_CONFIG.apiKey.includes('TVUJ');
+
+if (!CONFIGURED) {
+  // Zobraz setup banner pokud Firebase není nakonfigurován
+  const banner = document.getElementById('setup-banner');
+  if (banner) banner.style.display = 'block';
+  window.setSyncStatus('offline', '⚙️ Firebase není nastaven');
+} else {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getDatabase, ref, onValue, set } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+
+    window.setSyncStatus('connecting', '🔄 Připojuji Firebase…');
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'wedding');
+
+    // Naslouchej změnám — funguje v reálném čase pro oba
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        window.applyRemoteState(data);
+      } else {
+        // První spuštění — nahraj lokální data do Firebase
+        const local = localStorage.getItem('pueblo-wedding-v1');
+        if (local) set(dbRef, JSON.parse(local));
+      }
+      window.setSyncStatus('online', '🟢 Sync aktivní');
+    }, (err) => {
+      console.error('Firebase error:', err);
+      window.setSyncStatus('offline', '🔴 Firebase chyba');
+    });
+
+    // Bridge pro ukládání
+    window._firebaseSave = (state) => set(dbRef, JSON.parse(JSON.stringify(state)));
+    window._firebaseClear = () => set(dbRef, null);
+
+  } catch(err) {
+    console.error('Firebase init failed:', err);
+    window.setSyncStatus('offline', '🔴 Firebase se nepřipojil');
+  }
+}
 </script>
 </body>
 </html>
