@@ -262,19 +262,52 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="icon">👥</span> Počty hostů</div>
-      <div class="grid-4">
-        <div class="input-group"><label>👫 Dospělí (18+)</label><input type="number" id="g-adults" min="0" value="0" oninput="calcCatering()"></div>
-        <div class="input-group"><label>🧒 Děti 11–17 let</label><input type="number" id="g-teens" min="0" value="0" oninput="calcCatering()"></div>
-        <div class="input-group"><label>👧 Děti 3–10 let (½ porce)</label><input type="number" id="g-children" min="0" value="0" oninput="calcCatering()"></div>
-        <div class="input-group"><label>👶 Děti do 3 let (zdarma)</label><input type="number" id="g-babies" min="0" value="0" oninput="calcCatering()"></div>
-      </div>
-      <div class="grid-4" style="margin-top:8px;">
+      <div class="card-title"><span class="icon">👥</span> Počty hostů — automaticky dle seznamu</div>
+      <div class="grid-4" style="margin-top:4px;">
         <div class="guest-pill"><div class="gp-emoji">👫</div><div class="gp-count" id="gp-adults">0</div><div class="gp-label">Dospělí</div></div>
         <div class="guest-pill"><div class="gp-emoji">🧒</div><div class="gp-count" id="gp-teens">0</div><div class="gp-label">Děti 11–17</div></div>
         <div class="guest-pill"><div class="gp-emoji">👧</div><div class="gp-count" id="gp-children">0</div><div class="gp-label">Děti 3–10</div></div>
         <div class="guest-pill"><div class="gp-emoji">🪑</div><div class="gp-count" id="gp-total">0</div><div class="gp-label">Celkem hostů</div></div>
       </div>
+      <!-- Skryté inputy pro calcCatering kompatibilitu -->
+      <input type="hidden" id="g-adults" value="0">
+      <input type="hidden" id="g-teens" value="0">
+      <input type="hidden" id="g-children" value="0">
+      <input type="hidden" id="g-babies" value="0">
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> Seznam hostů</div>
+      <div class="form-row" style="margin-bottom:16px;">
+        <div class="input-group" style="flex:2;"><label>Jméno hosta</label><input type="text" id="gl-name" placeholder="např. Jana Nováková" onkeydown="if(event.key==='Enter')addGuest()"></div>
+        <div class="input-group" style="flex:1.5;"><label>Kategorie</label>
+          <select id="gl-cat">
+            <option value="adults">👫 Dospělý (18+)</option>
+            <option value="teens">🧒 Dítě 11–17 let</option>
+            <option value="children">👧 Dítě 3–10 let (½ porce)</option>
+            <option value="babies">👶 Do 3 let (zdarma)</option>
+          </select>
+        </div>
+        <div class="input-group" style="flex:1;"><label>Strana</label>
+          <select id="gl-side">
+            <option value="">—</option>
+            <option value="nevesta">💐 Nevěsta</option>
+            <option value="zenich">🤵 Ženich</option>
+            <option value="spolecni">💍 Společní</option>
+          </select>
+        </div>
+        <div style="padding-bottom:1px;"><button class="btn btn-gold" onclick="addGuest()">+ Přidat</button></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;" id="gl-filter-btns">
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('')">Všichni</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('adults')">👫 Dospělí</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('teens')">🧒 Děti 11–17</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('children')">👧 Děti 3–10</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('babies')">👶 Do 3 let</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('nevesta')">💐 Nevěsta</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:5px 12px;" onclick="filterGuests('zenich')">🤵 Ženich</button>
+      </div>
+      <div id="guest-list-render"><div class="empty-msg">Zatím žádní hosté. Přidejte prvního hosta výše.</div></div>
     </div>
 
     <div class="card">
@@ -545,6 +578,7 @@ const TABS=['overview','guests','budget','checklist','vendors','settings','guide
 const DEFAULT_STATE={
   settings:{bride:'',groom:''},
   guests:{adults:0,teens:0,children:0,babies:0,pFoodAdult:1890,pFoodTeen:1890,pFoodChild:1320,pDrinkAdult:640,pDrinkChild:380},
+  guestList:[],
   budget:0,
   expenses:[
     {id:1,name:'Pronájem svatebních prostor',category:'Venue & Pronájem',planned:20000,paid:0,vendor:'Mlýn vodníka Slámy'},
@@ -824,8 +858,114 @@ function clearData(){
   applyUI(); renderAll();
 }
 
+// ── GUEST LIST ─────────────────────────────────────
+const CAT_LABELS = {adults:'👫 Dospělý',teens:'🧒 Dítě 11–17',children:'👧 Dítě 3–10',babies:'👶 Do 3 let'};
+const SIDE_LABELS = {nevesta:'💐 Nevěsta',zenich:'🤵 Ženich',spolecni:'💍 Společní','':`—`};
+
+let _guestFilter = '';
+
+function addGuest() {
+  const name = document.getElementById('gl-name').value.trim();
+  if (!name) { document.getElementById('gl-name').focus(); return; }
+  if (!S.guestList) S.guestList = [];
+  S.guestList.push({
+    id: Date.now(),
+    name,
+    cat: document.getElementById('gl-cat').value,
+    side: document.getElementById('gl-side').value
+  });
+  document.getElementById('gl-name').value = '';
+  document.getElementById('gl-name').focus();
+  save();
+  syncGuestCountsFromList();
+  renderGuestList();
+}
+
+function deleteGuest(id) {
+  S.guestList = (S.guestList||[]).filter(g => g.id !== id);
+  save();
+  syncGuestCountsFromList();
+  renderGuestList();
+}
+
+function filterGuests(f) {
+  _guestFilter = f;
+  renderGuestList();
+}
+
+function syncGuestCountsFromList() {
+  const list = S.guestList || [];
+  const a = list.filter(g=>g.cat==='adults').length;
+  const t = list.filter(g=>g.cat==='teens').length;
+  const c = list.filter(g=>g.cat==='children').length;
+  const b = list.filter(g=>g.cat==='babies').length;
+  // Update hidden inputs so calcCatering picks them up
+  ['g-adults','g-teens','g-children','g-babies'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el) el.value = [a,t,c,b][i];
+  });
+  S.guests.adults=a; S.guests.teens=t; S.guests.children=c; S.guests.babies=b;
+  calcCatering();
+}
+
+function renderGuestList() {
+  const el = document.getElementById('guest-list-render');
+  if (!el) return;
+  const list = S.guestList || [];
+
+  // Update overview counts
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('ov-adults', list.filter(g=>g.cat==='adults').length);
+  s('ov-teens',  list.filter(g=>g.cat==='teens').length);
+  s('ov-children',list.filter(g=>g.cat==='children').length);
+  s('ov-babies', list.filter(g=>g.cat==='babies').length);
+
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-msg">Zatím žádní hosté. Přidejte prvního hosta výše.</div>';
+    return;
+  }
+
+  const filtered = _guestFilter
+    ? list.filter(g => g.cat === _guestFilter || g.side === _guestFilter)
+    : list;
+
+  // Summary pills
+  const total = list.length;
+  const byNevesta = list.filter(g=>g.side==='nevesta').length;
+  const byZenich  = list.filter(g=>g.side==='zenich').length;
+  const bySpolecni= list.filter(g=>g.side==='spolecni').length;
+
+  const summaryHtml = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="background:var(--ivory);border:1px solid var(--gold-light);border-radius:8px;padding:8px 14px;font-size:13px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold-dark)">${total}</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light)">Celkem</div>
+      </div>
+      ${byNevesta?`<div style="background:#fff0f5;border:1px solid #f0c0d0;border-radius:8px;padding:8px 14px;font-size:13px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--rose-dark)">${byNevesta}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light)">Nevěsta</div></div>`:''}
+      ${byZenich?`<div style="background:#f0f5ff;border:1px solid #b0c0e8;border-radius:8px;padding:8px 14px;font-size:13px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#4060a0">${byZenich}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light)">Ženich</div></div>`:''}
+      ${bySpolecni?`<div style="background:#f5fff0;border:1px solid #b0d8b0;border-radius:8px;padding:8px 14px;font-size:13px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#4a8a4a">${bySpolecni}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light)">Společní</div></div>`:''}
+    </div>`;
+
+  if (!filtered.length) {
+    el.innerHTML = summaryHtml + '<div class="empty-msg">Žádní hosté v tomto filtru.</div>';
+    return;
+  }
+
+  const rows = filtered.map(g => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--cream);">
+      <div style="flex:1;font-size:14px;font-weight:400">${g.name}</div>
+      <span style="font-size:11px;background:var(--cream);padding:2px 8px;border-radius:12px;color:var(--brown-light);white-space:nowrap">${CAT_LABELS[g.cat]||g.cat}</span>
+      ${g.side?`<span style="font-size:11px;background:var(--ivory);padding:2px 8px;border-radius:12px;color:var(--brown-light);white-space:nowrap">${SIDE_LABELS[g.side]||''}</span>`:''}
+      <button class="btn btn-del" onclick="deleteGuest(${g.id})">✕</button>
+    </div>`).join('');
+
+  el.innerHTML = summaryHtml + rows;
+}
+
 // ── RENDER ALL ─────────────────────────────────────
 function renderAll() {
+  syncGuestCountsFromList();
+  renderGuestList();
   calcCatering(); renderBudgetBar(); renderExpenses();
   renderChecklist(); renderVendors(); updateOverview(); updateCountdown();
 }
